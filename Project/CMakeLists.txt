@@ -7,6 +7,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Include directories
 include_directories(${CMAKE_SOURCE_DIR}/include)       # GLFW headers
 include_directories(external)                           # GLM & GLAD headers
+include_directories(${CMAKE_SOURCE_DIR}/src)          # all headers in src
+include_directories(external)                          # GLM & GLAD
+
 
 # Library directories
 link_directories(${CMAKE_SOURCE_DIR}/lib)              # glfw3.lib location
@@ -16,8 +19,11 @@ find_package(OpenGL REQUIRED)
 
 # Add executable and source files
 add_executable(Project
-        main.cpp
+        src/main.cpp
         external/glad/src/glad.c
+        src/Entity.cpp
+        src/Component.cpp
+        src/StaticShapeComp.cpp
 )
 
 # Link libraries
