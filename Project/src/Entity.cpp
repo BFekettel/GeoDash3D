@@ -3,3 +3,24 @@
 //
 
 #include "Entity.h"
+
+
+Entity::Entity() {
+    StaticMesh.SetOwner(this);
+
+    auto& Controller = AddComponent<ControllerComponent>(); // Adds controller to entity
+
+}
+
+void Entity::tick(float deltaTime) {
+
+    Position += Velocity;
+
+
+    if (Position.y > 0) {
+        Velocity.y -= 0.01;
+    } else if (Position.y <= 0) {
+        Velocity.y = 0;
+    }
+
+}

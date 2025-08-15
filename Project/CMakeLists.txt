@@ -24,6 +24,8 @@ add_executable(Project
         src/Entity.cpp
         src/Component.cpp
         src/StaticShapeComp.cpp
+        src/ControllerComponenet.cpp
+        src/ControllerComponenet.h
 )
 
 # Link libraries

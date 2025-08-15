@@ -11,8 +11,8 @@
 #include <cmath>
 
 // Window settings
-const unsigned int WIDTH = 800;
-const unsigned int HEIGHT = 600;
+const unsigned int WIDTH = 1200;
+const unsigned int HEIGHT = 800;
 
 int main() {
     // Init GLFW
@@ -40,40 +40,29 @@ int main() {
 
     Entity test; // Test entity
 
-
-
     // Projection matrix
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)WIDTH / HEIGHT, 0.1f, 100.0f);
 
 
-
+    //MAIN LOOP
     while (!glfwWindowShouldClose(window)) {
-        float time = glfwGetTime();
+        float deltaTime = glfwGetTime();
 
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) { //generic W Pressed
-            test.Position += glm::vec3(0.0f, 0.01f, 0.0f);
-        }
-        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) { //generic S Pressed
-            test.Position += glm::vec3(0.0f, -0.01f, 0.0f);
-        }
+
+        //Background
         glClearColor(0.1f, 0.1f, 0.15f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glUseProgram(test.StaticMesh.shaderProgram);
+        //Tick Logic
 
-        glm::mat4 model = glm::rotate(glm::mat4(1.0f), time, glm::vec3(0.5f, 1.0f, 0.0f));
-        glm::mat4 view = glm::translate(glm::mat4(1.0f), test.Position);
 
-        int modelLoc = glGetUniformLocation(test.StaticMesh.shaderProgram, "model");
-        int viewLoc = glGetUniformLocation(test.StaticMesh.shaderProgram, "view");
-        int projLoc = glGetUniformLocation(test.StaticMesh.shaderProgram, "projection");
 
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-        glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+        test.tick(deltaTime);
+        test.StaticMesh.tick(deltaTime);
+        if (auto Controller = test.GetComponent<ControllerComponent>()) {
+            Controller->tick(deltaTime);
+        }
 
-        glBindVertexArray(test.StaticMesh.VAO);
-        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

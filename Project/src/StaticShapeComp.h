@@ -9,8 +9,11 @@
 #include "Component.h"
 
 #include <glad/glad.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp> // for translate, rotate, perspective
+#include <glm/gtc/type_ptr.hpp>         // for value_ptr
 #include <iostream>
-
+#include <GLFW/glfw3.h>
 
 class StaticShapeComp: public Component {
 public:
@@ -41,8 +44,8 @@ public:
 
     void tick(float deltaTime) override;
 
-
-
+// Shaders Region
+#pragma region
     // Simple vertex shader
     const char* vertexShaderSource = R"(
 #version 330 core
@@ -89,10 +92,11 @@ void main() {
     }
 
     [[nodiscard]] unsigned int createShaderProgram() const;
-
+#pragma endregion
 
 
     unsigned int shaderProgram;
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)1200 / 800, 0.1f, 100.0f);
 
 };
 
