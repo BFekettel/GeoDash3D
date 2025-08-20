@@ -2,7 +2,7 @@
 // Created by Ben on 15/08/2025.
 //
 
-#include "ControllerComponenet.h"
+#include "ControllerComponent.h"
 
 #include "Entity.h"
 

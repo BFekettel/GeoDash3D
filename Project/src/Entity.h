@@ -11,7 +11,7 @@
 
 #include "StaticShapeComp.h"
 #include "Component.h"
-#include "ControllerComponenet.h"
+#include "ControllerComponent.h"
 
 #include <glm/glm.hpp>
 

@@ -10,6 +10,10 @@ include_directories(external)                           # GLM & GLAD headers
 include_directories(${CMAKE_SOURCE_DIR}/src)          # all headers in src
 include_directories(external)                          # GLM & GLAD
 
+include_directories(
+        ${CMAKE_SOURCE_DIR}/libs/imgui
+        ${CMAKE_SOURCE_DIR}/libs/imgui/backends
+)
 
 # Library directories
 link_directories(${CMAKE_SOURCE_DIR}/lib)              # glfw3.lib location
@@ -24,13 +28,19 @@ add_executable(Project
         src/Entity.cpp
         src/Component.cpp
         src/StaticShapeComp.cpp
-        src/ControllerComponenet.cpp
-        src/ControllerComponenet.h
+        src/ControllerComponent.cpp
         src/Camera.cpp
-        src/Camera.h
         src/RenderManager.cpp
-        src/RenderManager.h
+
+        # ImGui sources
+        libs/imgui/imgui.cpp
+        libs/imgui/imgui_draw.cpp
+        libs/imgui/imgui_tables.cpp
+        libs/imgui/imgui_widgets.cpp
+        libs/imgui/backends/imgui_impl_glfw.cpp
+        libs/imgui/backends/imgui_impl_opengl3.cpp
 )
+
 
 # Link libraries
 target_link_libraries(Project

@@ -12,6 +12,9 @@
 
 #include "Camera.h"
 #include "RenderManager.h"
+#include "imgui.h"
+#include "backends/imgui_impl_glfw.h"
+#include "backends/imgui_impl_opengl3.h"
 
 // Window settings
 const unsigned int WIDTH = 1200;
@@ -57,6 +60,16 @@ int main() {
     float lastFrameTime = currentTime;
     float deltaTime = currentTime - lastFrameTime;
 
+    // Setup ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    ImGui::StyleColorsDark();
+
+    // Setup Platform/Renderer bindings
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 330");
+
 
 
     //MAIN LOOP
@@ -73,42 +86,70 @@ int main() {
         Renderer.RenderAll();
         test.tick(deltaTime);
 
-        //TEST: camera movement
-        if (glfwGetKey(window, GLFW_KEY_W)) {
-            Cam.Position += glm::vec3(0.0f, 0.01f, 0.0f);
-        }
-        if (glfwGetKey(window, GLFW_KEY_S)) {
-            Cam.Position -= glm::vec3(0.0f, 0.01f, 0.0f);
-        }
-        if (glfwGetKey(window, GLFW_KEY_D)) {
-            Cam.Position += glm::vec3(0.01f, 0.0f, 0.00f);
-        }
-        if (glfwGetKey(window, GLFW_KEY_A)) {
-            Cam.Position -= glm::vec3(0.01f, 0.0f, 0.00f);
-        }
+        // Start ImGui frame
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
 
-        if (glfwGetKey(window, GLFW_KEY_UP)) {
-            Cam.Front += glm::vec3(0.0f, 0.05f, 0.0f);
-        }
-        if (glfwGetKey(window, GLFW_KEY_DOWN)) {
-            Cam.Front -= glm::vec3(0.0f, 0.05f, 0.0f);
-        }
-        if (glfwGetKey(window, GLFW_KEY_RIGHT)) {
-            Cam.Front += glm::vec3(0.05f, 0.0f, 0.0f);
-        }
-        if (glfwGetKey(window, GLFW_KEY_LEFT)) {
-            Cam.Front -= glm::vec3(0.05f, 0.0f, 0.0f);
-        }
+        // Draw frame stats
+        ImGui::Begin("Stats");
+        ImGui::Text("Frame time: %.2f ms", deltaTime * 1000.0f);
+        ImGui::Text("FPS: %.1f", 1.0 / deltaTime);
+        ImGui::End();
 
+        // Render ImGui
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+        // Camera speed
+        float moveSpeed = 5.0f;       // units per second
+        float rotateSpeed = 90.0f;    // degrees per second
+
+        // Movement input (frame-rate independent)
+        glm::vec3 forward = glm::normalize(Cam.Front);
+        glm::vec3 right   = glm::normalize(glm::cross(forward, Cam.Up));
+        glm::vec3 up      = Cam.Up;
+
+        if (glfwGetKey(window, GLFW_KEY_W)) Cam.Position += forward * moveSpeed * deltaTime;
+        if (glfwGetKey(window, GLFW_KEY_S)) Cam.Position -= forward * moveSpeed * deltaTime;
+        if (glfwGetKey(window, GLFW_KEY_D)) Cam.Position += right * moveSpeed * deltaTime;
+        if (glfwGetKey(window, GLFW_KEY_A)) Cam.Position -= right * moveSpeed * deltaTime;
+        if (glfwGetKey(window, GLFW_KEY_SPACE)) Cam.Position += up * moveSpeed * deltaTime;
+        if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)) Cam.Position -= up * moveSpeed * deltaTime;
+
+        // Rotation input (using arrow keys)
+        float yaw   = 0.0f;
+        float pitch = 0.0f;
+        if (glfwGetKey(window, GLFW_KEY_RIGHT))  yaw   = -rotateSpeed * deltaTime;
+        if (glfwGetKey(window, GLFW_KEY_LEFT)) yaw   =  rotateSpeed * deltaTime;
+        if (glfwGetKey(window, GLFW_KEY_UP))    pitch =  rotateSpeed * deltaTime;
+        if (glfwGetKey(window, GLFW_KEY_DOWN))  pitch = -rotateSpeed * deltaTime;
+
+        // Apply rotation
+        if (yaw != 0.0f || pitch != 0.0f) {
+            // Yaw: rotate around Up vector
+            glm::mat4 yawRot   = glm::rotate(glm::mat4(1.0f), glm::radians(yaw), Cam.Up);
+            // Pitch: rotate around Right vector
+            glm::mat4 pitchRot = glm::rotate(glm::mat4(1.0f), glm::radians(pitch), right);
+
+            glm::vec4 newFront = pitchRot * yawRot * glm::vec4(forward, 0.0f);
+            Cam.Front = glm::normalize(glm::vec3(newFront));
+        }
         if (auto Controller = test.GetComponent<ControllerComponent>()) {
             Controller->tick(deltaTime);
         }
-
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
+    // Cleanup ImGui
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+
+
+    // Cleanup Window
     glDeleteVertexArrays(1, &test.StaticMesh.VAO);
     glDeleteBuffers(1, &test.StaticMesh.VBO);
     glDeleteBuffers(1, &test.StaticMesh.EBO);
