@@ -20,6 +20,8 @@ public:
     unsigned int VAO{}, VBO{}, EBO{};
     StaticShapeComp();
     // Cube vertices (position + color)
+
+#pragma region Model Information
     float Vertices[48] = {
         // positions         // colors
         -0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
@@ -41,13 +43,14 @@ public:
         3, 2, 6, 6, 7, 3, // top
         0, 1, 5, 5, 4, 0  // bottom
     };
+#pragma endregion
 
     //Tick events
     void tick(float deltaTime) override;
     void Draw(const glm::mat4& view, const glm::mat4& projection);
 
-// Shaders Region
-#pragma region
+
+#pragma region Shader Logic
     // Simple vertex shader
     const char* vertexShaderSource = R"(
 #version 330 core
@@ -95,14 +98,17 @@ void main() {
 
     [[nodiscard]] unsigned int createShaderProgram() const;
 #pragma endregion
-    //Shader and rendering
+
+    //Shader Program
     unsigned int shaderProgram;
+
+private:
     int modelLoc;
     int viewLoc;
     int projLoc;
     int indexCount;
 
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)1200 / 800, 0.1f, 100.0f);
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)1200 / 800, 0.1f, 100.0f); //TODO: change aspect to something not using magic numbers
 
 };
 

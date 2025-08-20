@@ -12,7 +12,7 @@ Entity::Entity() {
 
 }
 
-void Entity::tick(float deltaTime) {
+void Entity::tick(float deltaTime) { //TODO: create physics manager
 
     Position += Velocity;
 

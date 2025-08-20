@@ -7,6 +7,8 @@
 
 StaticShapeComp::StaticShapeComp() {
     // Start Shader Program
+
+#pragma region Establishing Rendering Logic
     shaderProgram = createShaderProgram();
 
     //Get model info
@@ -38,6 +40,9 @@ StaticShapeComp::StaticShapeComp() {
 
     //Index Count Value
     indexCount = sizeof(Indices) / sizeof(Indices[0]);
+
+#pragma endregion
+
 }
 
 unsigned int StaticShapeComp::createShaderProgram() const{
@@ -74,9 +79,9 @@ void StaticShapeComp::Draw(const glm::mat4& view, const glm::mat4& projection) {
     glUseProgram(shaderProgram);
 
     // Build model transform
-    glm::mat4 model = glm::translate(glm::mat4(1.0f), Owner->Position)
-                    * glm::mat4_cast(Owner->Rotation)
-                    * glm::scale(glm::mat4(1.0f), Owner->Scale);
+    glm::mat4 model = glm::translate(glm::mat4(1.0f), Owner->Position) //Position, based on owner position
+                    * glm::mat4_cast(Owner->Rotation) // Rotation
+                    * glm::scale(glm::mat4(1.0f), Owner->Scale); // Scale
 
     // Send uniforms
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
