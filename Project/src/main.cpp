@@ -10,6 +10,9 @@
 
 #include <cmath>
 
+#include "Camera.h"
+#include "RenderManager.h"
+
 // Window settings
 const unsigned int WIDTH = 1200;
 const unsigned int HEIGHT = 800;
@@ -39,26 +42,64 @@ int main() {
     }
 
     Entity test; // Test entity
+    Entity test2; // Test 2 entity
+    test2.Position = glm::vec3(10, 0, 0);
 
-    // Projection matrix
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)WIDTH / HEIGHT, 0.1f, 100.0f);
+
+    RenderManager Renderer;
+    float aspect = static_cast<float>(WIDTH) / static_cast<float>(HEIGHT);
+    Camera Cam(90.0f, aspect, 0.1f, 100.0f);
+
+    Renderer.SetActiveCamera(&Cam); // sets active camera
+    Renderer.AddMesh(&test.StaticMesh); // adds test mesh to renderer
+    Renderer.AddMesh(&test2.StaticMesh); // adds test mesh to renderer
+    float currentTime = glfwGetTime();
+    float lastFrameTime = currentTime;
+    float deltaTime = currentTime - lastFrameTime;
+
 
 
     //MAIN LOOP
     while (!glfwWindowShouldClose(window)) {
-        float deltaTime = glfwGetTime();
-
+        currentTime = glfwGetTime();
+        deltaTime = currentTime - lastFrameTime;
+        lastFrameTime = currentTime;
 
         //Background
         glClearColor(0.1f, 0.1f, 0.15f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         //Tick Logic
-
-
-
+        Renderer.RenderAll();
         test.tick(deltaTime);
-        test.StaticMesh.tick(deltaTime);
+
+        //TEST: camera movement
+        if (glfwGetKey(window, GLFW_KEY_W)) {
+            Cam.Position += glm::vec3(0.0f, 0.01f, 0.0f);
+        }
+        if (glfwGetKey(window, GLFW_KEY_S)) {
+            Cam.Position -= glm::vec3(0.0f, 0.01f, 0.0f);
+        }
+        if (glfwGetKey(window, GLFW_KEY_D)) {
+            Cam.Position += glm::vec3(0.01f, 0.0f, 0.00f);
+        }
+        if (glfwGetKey(window, GLFW_KEY_A)) {
+            Cam.Position -= glm::vec3(0.01f, 0.0f, 0.00f);
+        }
+
+        if (glfwGetKey(window, GLFW_KEY_UP)) {
+            Cam.Front += glm::vec3(0.0f, 0.05f, 0.0f);
+        }
+        if (glfwGetKey(window, GLFW_KEY_DOWN)) {
+            Cam.Front -= glm::vec3(0.0f, 0.05f, 0.0f);
+        }
+        if (glfwGetKey(window, GLFW_KEY_RIGHT)) {
+            Cam.Front += glm::vec3(0.05f, 0.0f, 0.0f);
+        }
+        if (glfwGetKey(window, GLFW_KEY_LEFT)) {
+            Cam.Front -= glm::vec3(0.05f, 0.0f, 0.0f);
+        }
+
         if (auto Controller = test.GetComponent<ControllerComponent>()) {
             Controller->tick(deltaTime);
         }

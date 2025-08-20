@@ -10,8 +10,8 @@
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp> // for translate, rotate, perspective
-#include <glm/gtc/type_ptr.hpp>         // for value_ptr
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <GLFW/glfw3.h>
 
@@ -42,7 +42,9 @@ public:
         0, 1, 5, 5, 4, 0  // bottom
     };
 
+    //Tick events
     void tick(float deltaTime) override;
+    void Draw(const glm::mat4& view, const glm::mat4& projection);
 
 // Shaders Region
 #pragma region
@@ -93,9 +95,13 @@ void main() {
 
     [[nodiscard]] unsigned int createShaderProgram() const;
 #pragma endregion
-
-
+    //Shader and rendering
     unsigned int shaderProgram;
+    int modelLoc;
+    int viewLoc;
+    int projLoc;
+    int indexCount;
+
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)1200 / 800, 0.1f, 100.0f);
 
 };

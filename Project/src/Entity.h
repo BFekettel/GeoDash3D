@@ -18,8 +18,8 @@
 class Entity {
 public:
     // Translation
-    glm::vec3 Position = {0.0f, 0.0f, -3.0f};
-    glm::vec4 Rotation = {1.0f, 1.0f, 1.0f, 1.0f};
+    glm::vec3 Position = {0.0f, 0.0f, 1.0f};
+    glm::quat Rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
     glm::vec3 Scale = {1.0f, 1.0f, 1.0f};
 
     glm::vec3 Velocity = {0.0f, 0.0f, 0.0f}; // TEMP CURRENT VELOCITY
@@ -58,8 +58,6 @@ public:
 
 private:
     std::unordered_map<std::type_index, std::unique_ptr<Component>> components;
-
-
 
 };
 

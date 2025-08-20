@@ -26,6 +26,10 @@ add_executable(Project
         src/StaticShapeComp.cpp
         src/ControllerComponenet.cpp
         src/ControllerComponenet.h
+        src/Camera.cpp
+        src/Camera.h
+        src/RenderManager.cpp
+        src/RenderManager.h
 )
 
 # Link libraries

@@ -6,7 +6,15 @@
 #include "Entity.h"
 
 StaticShapeComp::StaticShapeComp() {
+    // Start Shader Program
     shaderProgram = createShaderProgram();
+
+    //Get model info
+    modelLoc = glGetUniformLocation(shaderProgram, "model");
+    viewLoc  = glGetUniformLocation(shaderProgram, "view");
+    projLoc  = glGetUniformLocation(shaderProgram, "projection");
+
+
     glEnable(GL_DEPTH_TEST);
 
     glGenVertexArrays(1, &VAO);
@@ -27,6 +35,9 @@ StaticShapeComp::StaticShapeComp() {
     // Color attribute
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+
+    //Index Count Value
+    indexCount = sizeof(Indices) / sizeof(Indices[0]);
 }
 
 unsigned int StaticShapeComp::createShaderProgram() const{
@@ -55,22 +66,26 @@ unsigned int StaticShapeComp::createShaderProgram() const{
 
 void StaticShapeComp::tick(float deltaTime) {
     //Component::tick(deltaTime);
+
+
+}
+
+void StaticShapeComp::Draw(const glm::mat4& view, const glm::mat4& projection) {
     glUseProgram(shaderProgram);
 
-    glm::mat4 model = glm::rotate(glm::mat4(1.0f), Owner->Rotation.w, xyz(Owner->Rotation));
-    glm::mat4 view = glm::translate(glm::mat4(1.0f), Owner->Position);
+    // Build model transform
+    glm::mat4 model = glm::translate(glm::mat4(1.0f), Owner->Position)
+                    * glm::mat4_cast(Owner->Rotation)
+                    * glm::scale(glm::mat4(1.0f), Owner->Scale);
 
-    int modelLoc = glGetUniformLocation(shaderProgram, "model");
-    int viewLoc = glGetUniformLocation(shaderProgram, "view");
-    int projLoc = glGetUniformLocation(shaderProgram, "projection");
-
+    // Send uniforms
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
+    // Draw mesh
     glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-
+    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
 }
 
 
