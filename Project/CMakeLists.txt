@@ -25,12 +25,12 @@ find_package(OpenGL REQUIRED)
 add_executable(Project
         src/main.cpp
         external/glad/src/glad.c
-        src/Entity.cpp
-        src/Component.cpp
-        src/StaticShapeComp.cpp
-        src/ControllerComponent.cpp
-        src/Camera.cpp
-        src/RenderManager.cpp
+        src/Entity/Entity.cpp
+        src/Components/Component.cpp
+        src/Components/StaticShapeComp.cpp
+        src/Components/ControllerComponent.cpp
+        src/Rendering/Camera.cpp
+        src/Rendering/RenderManager.cpp
 
         # ImGui sources
         libs/imgui/imgui.cpp

@@ -3,7 +3,7 @@
 //
 
 #include "StaticShapeComp.h"
-#include "Entity.h"
+#include "../Entity/Entity.h"
 
 StaticShapeComp::StaticShapeComp() {
     // Start Shader Program

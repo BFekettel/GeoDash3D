@@ -9,9 +9,9 @@
 #include <typeindex>
 #include <unordered_map>
 
-#include "StaticShapeComp.h"
-#include "Component.h"
-#include "ControllerComponent.h"
+#include "../Components/StaticShapeComp.h"
+#include "../Components/Component.h"
+#include "../Components/ControllerComponent.h"
 
 #include <glm/glm.hpp>
 

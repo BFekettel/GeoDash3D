@@ -4,7 +4,7 @@
 
 #include "ControllerComponent.h"
 
-#include "Entity.h"
+#include "Entity/Entity.h"
 
 void ControllerComponent::tick(float deltaTime) {
 

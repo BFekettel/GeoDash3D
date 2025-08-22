@@ -3,7 +3,7 @@
 
 #include <vector>
 #include "Camera.h"
-#include "StaticShapeComp.h"
+#include "../Components/StaticShapeComp.h"
 
 class RenderManager {
 public:

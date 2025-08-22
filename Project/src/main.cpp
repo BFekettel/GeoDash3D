@@ -6,12 +6,12 @@
 #include <glm/gtc/matrix_transform.hpp> // for translate, rotate, perspective
 #include <glm/gtc/type_ptr.hpp>         // for value_ptr
 
-#include "Entity.h"
+#include "Entity/Entity.h"
 
 #include <cmath>
 
-#include "Camera.h"
-#include "RenderManager.h"
+#include "Rendering/Camera.h"
+#include "Rendering/RenderManager.h"
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
@@ -115,7 +115,7 @@ int main() {
         if (glfwGetKey(window, GLFW_KEY_D)) Cam.Position += right * moveSpeed * deltaTime;
         if (glfwGetKey(window, GLFW_KEY_A)) Cam.Position -= right * moveSpeed * deltaTime;
         if (glfwGetKey(window, GLFW_KEY_SPACE)) Cam.Position += up * moveSpeed * deltaTime;
-        if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)) Cam.Position -= up * moveSpeed * deltaTime;
+        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT)) Cam.Position -= up * moveSpeed * deltaTime;
 
         // Rotation input (using arrow keys)
         float yaw   = 0.0f;
