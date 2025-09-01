@@ -80,6 +80,25 @@ The technical aim is to use **advanced low-level programming techniques** to bui
 ## 🖥 Technical Design
 **UML Diagrams:** [View UML Design](https://drive.google.com/file/d/1Zo191hFVnJD_m2_beG95Pw8NEu7ZUg-m/view?usp=sharing)
 
+
+## Learning Resources 
+**OpenGL Shaders:** [Website](https://learnopengl.com/Getting-started/Shaders)
+
+**OpenGL Renderer Concepts:** [Video](https://www.youtube.com/watch?app=desktop&v=jjaTTRFXRAk&t=3m11s)
+This video discusses the OpenGL concept of a renderer. This was going to be an early issue I needed to solve before I got too deep, as I was working on the Static Shape Render I thought about the possible issue of sharing a camera system across all the instances of any Object that needed to be rendered in. The Cherno covers this concept in detail, giving me the idea of what I need to do before I go deeper in.
+Changes from this:
+-	Added Renderer Class to UML
+-	Reworked code to use a global Renderer as a source for perspective rather than static “magic values”
+
+**IMGUI:** [Repo](https://github.com/ocornut/imgui)
+ImGUI will be a useful library to have, it provides a quick 2d element to the viewport, allowing me to display and edit values with ease. Initial use will be used for displaying performance metrics (fps and ms), but Ill like to play around with it more to see how it can help with debugging, such as toggles for show collision.
+
+**OpenGL Anti-Aliasing** [Website](https://learnopengl.com/Advanced-OpenGL/Anti-Aliasing)
+This Website covers Anti Aliasing, not really needed but would be a nice addition to adopt early while developing the base rendering systems.
+
+
+**
+
 ---
 
 ## 📌 Notes
