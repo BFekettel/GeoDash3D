@@ -41,6 +41,8 @@ add_executable(Project
         libs/imgui/backends/imgui_impl_opengl3.cpp
         src/Rendering/Shader.cpp
         src/Rendering/Shader.h
+        src/Developer/DevGui.cpp
+        src/Developer/DevGui.h
 )
 
 

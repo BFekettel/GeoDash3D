@@ -12,9 +12,8 @@
 
 #include "Rendering/Camera.h"
 #include "Rendering/RenderManager.h"
-#include "imgui.h"
-#include "backends/imgui_impl_glfw.h"
-#include "backends/imgui_impl_opengl3.h"
+
+#include "Developer/DevGui.h"
 
 // Window settings
 const unsigned int WIDTH = 1200;
@@ -43,7 +42,7 @@ int main() {
         std::cerr << "Failed to init GLAD" << std::endl;
         return -1;
     }
-
+//Testing Entities
     Entity test; // Test entity
     Entity test2; // Test 2 entity
     test2.Position = glm::vec3(10, 0, 0);
@@ -86,16 +85,10 @@ void main() {
     float lastFrameTime = currentTime;
     float deltaTime = currentTime - lastFrameTime;
 
-    // Setup ImGui context
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    ImGui::StyleColorsDark();
-    static bool toggleCulling = true;
 
-    // Setup Platform/Renderer bindings
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 330");
+
+    //IMGUI object
+    DevGui GUI(window);
 
 
 
@@ -114,24 +107,10 @@ void main() {
         Renderer.RenderAll(basicShader);
         test.tick(deltaTime);
         test2.tick(deltaTime);
-
-        // Start ImGui frame
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-        // Draw frame stats
-        ImGui::Begin("Stats");
-        ImGui::Text("Frame time: %.2f ms", deltaTime * 1000.0f);
-        ImGui::Text("FPS: %.1f", 1.0 / deltaTime);
-        ImGui::Checkbox("Toggle Culling", &toggleCulling);
-        ImGui::End();
-
-        // Render ImGui
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        GUI.DrawGui(deltaTime);
 
 
+#pragma region Camera Movement
         // Camera speed
         float moveSpeed = 5.0f;       // units per second
         float rotateSpeed = 90.0f;    // degrees per second
@@ -169,11 +148,11 @@ void main() {
         if (auto Controller = test.GetComponent<ControllerComponent>()) {
             Controller->tick(deltaTime);
         }
-
+#pragma endregion
         glfwSwapBuffers(window);
         glfwPollEvents();
 
-        if (toggleCulling) { //toggle in ImGUI
+        if (GUI.toggleCulling) { //toggle in ImGUI
             glEnable(GL_CULL_FACE); // enable culling
             glCullFace(GL_BACK); // cull back faces
             glFrontFace(GL_CCW); // counter-clockwise winding = front face
@@ -183,14 +162,11 @@ void main() {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //clear depth
 
-
     }
 
-    // Cleanup ImGui
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
 
+    //GUI cleanup
+    GUI.Cleanup();
 
     // Cleanup Window
     glDeleteVertexArrays(1, &test.StaticMesh.VAO);
