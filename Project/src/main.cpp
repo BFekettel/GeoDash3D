@@ -72,7 +72,6 @@ void main() {
     FragColor = vec4(ourColor, 1.0);
 })"
     );
-    
 #pragma endregion
 
     RenderManager Renderer;
