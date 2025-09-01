@@ -1,23 +1,33 @@
 // main.cpp
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+
 #include <iostream>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp> // for translate, rotate, perspective
-#include <glm/gtc/type_ptr.hpp>         // for value_ptr
+#include <fstream>
+#include <sstream>
+#include <string>
 
 #include "Entity/Entity.h"
-
-#include <cmath>
-
 #include "Rendering/Camera.h"
 #include "Rendering/RenderManager.h"
-
 #include "Developer/DevGui.h"
 
 // Window settings
 const unsigned int WIDTH = 1200;
 const unsigned int HEIGHT = 800;
+
+//TEMP LOADING SHADERS
+std::string LoadShaderSource(const std::string& filePath) {
+    std::ifstream file(filePath);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open shader file: " << filePath << std::endl;
+        return "";
+    }
+
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    return buffer.str();
+}
 
 int main() {
     // Init GLFW
@@ -48,30 +58,12 @@ int main() {
     test2.Position = glm::vec3(10, 0, 0);
 
 #pragma region Shader Tests
+
     Shader basicShader(
-    R"(
-#version 330 core
-layout(location = 0) in vec3 aPos;
-layout(location = 1) in vec3 aColor;
+    LoadShaderSource("../shaders/basic.vert").c_str(),
+    LoadShaderSource("../shaders/basic.frag").c_str()
+);
 
-out vec3 ourColor;
-
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
-
-void main() {
-    gl_Position = projection * view * model * vec4(aPos, 1.0);
-    ourColor = aColor;
-})",
-    R"(
-#version 330 core
-in vec3 ourColor; //INPUT INFORMATION
-out vec4 FragColor; //OUTPUT INFORMATION
-void main() {
-    FragColor = vec4(ourColor, 1.0);
-})"
-    );
 #pragma endregion
 
     RenderManager Renderer;
@@ -104,6 +96,7 @@ void main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         //Tick Logic
+
         Renderer.RenderAll(basicShader);
         test.tick(deltaTime);
         test2.tick(deltaTime);
@@ -161,6 +154,14 @@ void main() {
         }
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //clear depth
+
+        if (GUI.recompileShaders) {
+            basicShader.recompile(
+        LoadShaderSource("../shaders/basic.vert").c_str(),
+        LoadShaderSource("../shaders/basic.frag").c_str()
+            );
+            GUI.recompileShaders = false;
+        }
 
     }
 

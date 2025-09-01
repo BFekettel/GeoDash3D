@@ -16,6 +16,7 @@ class DevGui {
     ~DevGui() = default;
 
     bool toggleCulling = true;
+    bool recompileShaders = false;
 
     void Cleanup();
     void DrawGui(float &deltaTime);

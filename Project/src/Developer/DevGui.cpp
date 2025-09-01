@@ -35,6 +35,7 @@ void DevGui::DrawGui(float &deltaTime) {
     ImGui::Text("Frame time: %.2f ms", deltaTime * 1000.0f);
     ImGui::Text("FPS: %.1f", 1.0 / deltaTime);
     ImGui::Checkbox("Toggle Culling", &toggleCulling);
+    ImGui::Checkbox("Recompile Shaders", &recompileShaders);
     ImGui::End();
 
     // Render ImGui

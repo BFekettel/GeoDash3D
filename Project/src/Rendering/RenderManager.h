@@ -8,11 +8,6 @@
 
 class RenderManager {
 public:
-    // static RenderManager& GetInstance() {
-    //     static RenderManager instance;
-    //     return instance;
-    // }
-
     RenderManager() = default;
 
     // Camera

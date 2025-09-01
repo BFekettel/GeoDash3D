@@ -25,6 +25,8 @@ Shader::Shader(const char* vertexSrc, const char* fragmentSrc) {
     if (!success) {
         glGetProgramInfoLog(ID, 512, nullptr, infoLog);
         std::cerr << "Shader linking failed: " << infoLog << std::endl;
+    } else {
+        std::cout << "Shader linked" << std::endl;
     }
 
     glDeleteShader(vertex);
@@ -54,6 +56,12 @@ unsigned int Shader::compileShader(unsigned int type, const char* source) {
      * This function runs the shader programs and returns the results of the shaders
      */
 }
+
+void Shader::recompile(const char* vertexSrc, const char* fragmentSrc) {
+    Shader(vertexSrc, fragmentSrc);
+
+}
+
 
 void Shader::setMat4(const std::string& name, const glm::mat4& mat) const {
     int loc = glGetUniformLocation(ID, name.c_str());
