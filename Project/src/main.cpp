@@ -66,8 +66,8 @@ void main() {
 })",
     R"(
 #version 330 core
-in vec3 ourColor;
-out vec4 FragColor;
+in vec3 ourColor; //INPUT INFORMATION
+out vec4 FragColor; //OUTPUT INFORMATION
 void main() {
     FragColor = vec4(ourColor, 1.0);
 })"
@@ -167,11 +167,6 @@ void main() {
 
     //GUI cleanup
     GUI.Cleanup();
-
-    // Cleanup Window
-    glDeleteVertexArrays(1, &test.StaticMesh.VAO);
-    glDeleteBuffers(1, &test.StaticMesh.VBO);
-    glDeleteBuffers(1, &test.StaticMesh.EBO);
 
     glfwTerminate();
     return 0;

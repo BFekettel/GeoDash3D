@@ -32,6 +32,12 @@ StaticShapeComp::StaticShapeComp() {
     indexCount = sizeof(Indices) / sizeof(unsigned int);
 }
 
+StaticShapeComp::~StaticShapeComp() { //deletes buffers
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
+}
+
 void StaticShapeComp::Draw(const Shader& shader, const glm::mat4& view, const glm::mat4& projection) {
     shader.use();
     shader.setMat4("model", model);

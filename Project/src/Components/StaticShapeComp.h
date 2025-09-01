@@ -21,6 +21,7 @@ public:
     glm::mat4 model{1.0f};
 
     StaticShapeComp();
+    ~StaticShapeComp();
 
     void tick(float deltaTime) override {}
     void Draw(const Shader& shader, const glm::mat4& view, const glm::mat4& projection);
