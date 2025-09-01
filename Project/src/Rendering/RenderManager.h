@@ -4,6 +4,7 @@
 #include <vector>
 #include "Camera.h"
 #include "../Components/StaticShapeComp.h"
+#include "Shader.h"
 
 class RenderManager {
 public:
@@ -22,7 +23,7 @@ public:
 
     void SetActiveCamera(Camera* cam) { ActiveCamera = cam; }
     void AddMesh(StaticShapeComp* mesh) { Meshes.push_back(mesh); }
-    void RenderAll();
+    void RenderAll(Shader& shader);
 
 private:
 

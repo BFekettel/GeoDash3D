@@ -48,6 +48,32 @@ int main() {
     Entity test2; // Test 2 entity
     test2.Position = glm::vec3(10, 0, 0);
 
+#pragma region Shader Tests
+    Shader basicShader(
+    R"(
+#version 330 core
+layout(location = 0) in vec3 aPos;
+layout(location = 1) in vec3 aColor;
+
+out vec3 ourColor;
+
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+
+void main() {
+    gl_Position = projection * view * model * vec4(aPos, 1.0);
+    ourColor = aColor;
+})",
+    R"(
+#version 330 core
+in vec3 ourColor;
+out vec4 FragColor;
+void main() {
+    FragColor = vec4(ourColor, 1.0);
+})"
+    );
+#pragma endregion
 
     RenderManager Renderer;
     float aspect = static_cast<float>(WIDTH) / static_cast<float>(HEIGHT);
@@ -65,6 +91,7 @@ int main() {
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     ImGui::StyleColorsDark();
+    static bool toggleCulling = true;
 
     // Setup Platform/Renderer bindings
     ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -77,14 +104,16 @@ int main() {
         currentTime = glfwGetTime();
         deltaTime = currentTime - lastFrameTime;
         lastFrameTime = currentTime;
+        glEnable(GL_DEPTH_TEST); //depth testing
 
         //Background
         glClearColor(0.1f, 0.1f, 0.15f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         //Tick Logic
-        Renderer.RenderAll();
+        Renderer.RenderAll(basicShader);
         test.tick(deltaTime);
+        test2.tick(deltaTime);
 
         // Start ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
@@ -95,11 +124,13 @@ int main() {
         ImGui::Begin("Stats");
         ImGui::Text("Frame time: %.2f ms", deltaTime * 1000.0f);
         ImGui::Text("FPS: %.1f", 1.0 / deltaTime);
+        ImGui::Checkbox("Toggle Culling", &toggleCulling);
         ImGui::End();
 
         // Render ImGui
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 
         // Camera speed
         float moveSpeed = 5.0f;       // units per second
@@ -141,6 +172,18 @@ int main() {
 
         glfwSwapBuffers(window);
         glfwPollEvents();
+
+        if (toggleCulling) { //toggle in ImGUI
+            glEnable(GL_CULL_FACE); // enable culling
+            glCullFace(GL_BACK); // cull back faces
+            glFrontFace(GL_CCW); // counter-clockwise winding = front face
+        } else {
+            glDisable(GL_CULL_FACE); //disable culling
+        }
+
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //clear depth
+
+
     }
 
     // Cleanup ImGui

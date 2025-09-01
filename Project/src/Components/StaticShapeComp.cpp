@@ -6,19 +6,7 @@
 #include "../Entity/Entity.h"
 
 StaticShapeComp::StaticShapeComp() {
-    // Start Shader Program
-
-#pragma region Establishing Rendering Logic
-    shaderProgram = createShaderProgram();
-
-    //Get model info
-    modelLoc = glGetUniformLocation(shaderProgram, "model");
-    viewLoc  = glGetUniformLocation(shaderProgram, "view");
-    projLoc  = glGetUniformLocation(shaderProgram, "projection");
-
-
-    glEnable(GL_DEPTH_TEST);
-
+    // Setup VAO/VBO/EBO
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
@@ -31,68 +19,25 @@ StaticShapeComp::StaticShapeComp() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices), Indices, GL_STATIC_DRAW);
 
-    // Position attribute
+    // Position
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    // Color attribute
+
+    // Color
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    //Index Count Value
-    indexCount = sizeof(Indices) / sizeof(Indices[0]);
+    glBindVertexArray(0);
 
-#pragma endregion
-
+    indexCount = sizeof(Indices) / sizeof(unsigned int);
 }
 
-unsigned int StaticShapeComp::createShaderProgram() const{
-    unsigned int vertexShader = compileShader(GL_VERTEX_SHADER, vertexShaderSource);
-    unsigned int fragmentShader = compileShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
+void StaticShapeComp::Draw(const Shader& shader, const glm::mat4& view, const glm::mat4& projection) {
+    shader.use();
+    shader.setMat4("model", model);
+    shader.setMat4("view", view);
+    shader.setMat4("projection", projection);
 
-    unsigned int shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-
-    int success;
-    char infoLog[512];
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-    if (!success) {
-        glGetProgramInfoLog(shaderProgram, 512, nullptr, infoLog);
-        std::cerr << "Program link error: " << infoLog << std::endl;
-    }
-
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
-    return shaderProgram;
-}
-
-
-void StaticShapeComp::tick(float deltaTime) {
-    //Component::tick(deltaTime);
-
-
-}
-
-void StaticShapeComp::Draw(const glm::mat4& view, const glm::mat4& projection) {
-    glUseProgram(shaderProgram);
-
-    // Build model transform
-    glm::mat4 model = glm::translate(glm::mat4(1.0f), Owner->Position) //Position, based on owner position
-                    * glm::mat4_cast(Owner->Rotation) // Rotation
-                    * glm::scale(glm::mat4(1.0f), Owner->Scale); // Scale
-
-    // Send uniforms
-    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-    glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
-    // Draw mesh
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
 }
-
-
-
-

@@ -39,6 +39,8 @@ add_executable(Project
         libs/imgui/imgui_widgets.cpp
         libs/imgui/backends/imgui_impl_glfw.cpp
         libs/imgui/backends/imgui_impl_opengl3.cpp
+        src/Rendering/Shader.cpp
+        src/Rendering/Shader.h
 )
 
 

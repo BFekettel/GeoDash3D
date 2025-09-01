@@ -22,5 +22,12 @@ void Entity::tick(float deltaTime) { //TODO: create physics manager
     } else if (Position.y <= 0) {
         Velocity.y = 0;
     }
+//Updates Position of mesh
+    glm::mat4 model(1.0f);
+    model = glm::translate(model, Position);
+    model = glm::scale(model, Scale);
+    //this needs fixing eventually
+    //model = glm::Mat4(Rotation);
+    StaticMesh.model = model;
 
 }
