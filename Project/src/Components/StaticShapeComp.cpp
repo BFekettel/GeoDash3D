@@ -40,10 +40,11 @@ StaticShapeComp::~StaticShapeComp() { //deletes buffers
 
 void StaticShapeComp::Draw(const Shader& shader, const glm::mat4& view, const glm::mat4& projection) {
     shader.use();
+    //Passing Uniform into shader program
     shader.setMat4("model", model);
     shader.setMat4("view", view);
     shader.setMat4("projection", projection);
 
     glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0); //Draws model from shader results
 }

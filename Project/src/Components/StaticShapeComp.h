@@ -18,7 +18,10 @@
 class StaticShapeComp: public Component {
 public:
     unsigned int VAO{}, VBO{}, EBO{};
-    glm::mat4 model{1.0f};
+    glm::mat4 model{1.0f}; //Uniform for model
+    /*
+     * Uniforms allow cpu members be passed into gpu shader programs
+     */
 
     StaticShapeComp();
     ~StaticShapeComp();

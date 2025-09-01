@@ -7,6 +7,9 @@ void RenderManager::RenderAll(Shader& shader) {
 
     glm::mat4 view = ActiveCamera->GetView();
     glm::mat4 projection = ActiveCamera->GetProjection();
+    /*
+     * Uniforms for shaders
+     */
 
     for (auto* mesh : Meshes) {
         mesh->Draw(shader, view, projection);
