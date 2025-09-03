@@ -12,9 +12,6 @@
 #include "Rendering/RenderManager.h"
 #include "Developer/DevGui.h"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "../external/stb/stb_image.h"
-
 // Window settings
 const unsigned int WIDTH = 1200;
 const unsigned int HEIGHT = 800;

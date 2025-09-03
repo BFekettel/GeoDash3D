@@ -7,15 +7,17 @@
 #include "../Rendering/Shader.h"
 
 #include "Component.h"
+
+#include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "../external/stb/stb_image.h"
+#include <iostream>
+#include <GLFW/glfw3.h>
 
 class StaticShapeComp: public Component {
 public:
     unsigned int VAO{}, VBO{}, EBO{};
-    unsigned int texture;
     glm::mat4 model{1.0f}; //Uniform for model
     /*
      * Uniforms allow cpu members be passed into gpu shader programs
@@ -30,18 +32,18 @@ public:
 private:
     int indexCount;
 
-
 #pragma region Model Information
-    float vertices[6*8] = {
-        // positions          // colors
-        -0.5f,-0.5f,-0.5f,   1.0f,1.0f,1.0f,
-         0.5f,-0.5f,-0.5f,   1.0f,1.0f,1.0f,
-         0.5f, 0.5f,-0.5f,   1.0f,1.0f,1.0f,
-        -0.5f, 0.5f,-0.5f,   1.0f,1.0f,1.0f,
-        -0.5f,-0.5f, 0.5f,   1.0f,1.0f,1.0f,
-         0.5f,-0.5f, 0.5f,   1.0f,1.0f,1.0f,
-         0.5f, 0.5f, 0.5f,   1.0f,1.0f,1.0f,
-        -0.5f, 0.5f, 0.5f,   1.0f,1.0f,1.0f
+    float Vertices[48] = {
+        // positions         // colors
+        -0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 0.0f,
+
+        -0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 1.0f,
+         0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f, 0.3f, 0.5f, 0.7f
     };
 
     unsigned int Indices[36] = { //triangles
@@ -52,10 +54,6 @@ private:
         3, 0, 4, 3, 4, 7, // top
         1, 2, 6, 1, 6, 5  // bottom
     };
-
-    // int width, height, nrChannels;
-    // unsigned char *data = stbi_load("resources/Denzel.jpg", &width, &height, &nrChannels, 0);
-
 
 #pragma endregion
 };
