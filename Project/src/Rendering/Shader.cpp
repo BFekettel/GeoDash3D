@@ -58,7 +58,33 @@ unsigned int Shader::compileShader(unsigned int type, const char* source) {
 }
 
 void Shader::recompile(const char* vertexSrc, const char* fragmentSrc) {
-    Shader(vertexSrc, fragmentSrc);
+    // Compile new shaders
+    unsigned int vertex = compileShader(GL_VERTEX_SHADER, vertexSrc);
+    unsigned int fragment = compileShader(GL_FRAGMENT_SHADER, fragmentSrc);
+
+    // Create new program
+    unsigned int newID = glCreateProgram();
+    glAttachShader(newID, vertex);
+    glAttachShader(newID, fragment);
+    glLinkProgram(newID);
+
+    int success;
+    char infoLog[512];
+    glGetProgramiv(newID, GL_LINK_STATUS, &success);
+    if (!success) {
+        glGetProgramInfoLog(newID, 512, nullptr, infoLog);
+        std::cerr << "Shader re-linking failed: " << infoLog << std::endl;
+    } else {
+        std::cout << "Shader recompiled successfully" << std::endl;
+    }
+
+    // Delete old program and shaders
+    glDeleteShader(vertex);
+    glDeleteShader(fragment);
+    if (ID != 0) glDeleteProgram(ID);
+
+    // Update ID
+    ID = newID;
 
 }
 
@@ -71,4 +97,8 @@ void Shader::setMat4(const std::string& name, const glm::mat4& mat) const {
 void Shader::setVec3(const std::string& name, const glm::vec3& vec) const {
     int loc = glGetUniformLocation(ID, name.c_str());
     glUniform3fv(loc, 1, &vec[0]);
+}
+
+void Shader::setInt(const std::string &name, int value) const {
+    glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
 }
