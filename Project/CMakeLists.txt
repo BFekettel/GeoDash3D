@@ -49,6 +49,7 @@ add_executable(Project
 # Link libraries
 target_link_libraries(Project
         glfw3
+        assimp-vc143-mt
         ${OPENGL_gl_LIBRARY}
         gdi32
         user32
