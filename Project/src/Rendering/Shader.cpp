@@ -7,6 +7,29 @@
 #include <iostream>
 
 Shader::Shader(const char* vertexSrc, const char* fragmentSrc) {
+    recompile(vertexSrc, fragmentSrc);
+}
+
+unsigned int Shader::compileShader(unsigned int type, const char* source) {
+    unsigned int shader = glCreateShader(type);
+    glShaderSource(shader, 1, &source, nullptr);
+    glCompileShader(shader);
+
+    int success;
+    char infoLog[512];
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        glGetShaderInfoLog(shader, 512, nullptr, infoLog);
+        std::cerr << "Shader compile error: " << infoLog << std::endl;
+    }
+    return shader;
+
+    /*
+     * This function runs the shader programs and returns the results of the shaders
+     */
+}
+
+void Shader::recompile(const char* vertexSrc, const char* fragmentSrc) {
     unsigned int vertex = compileShader(GL_VERTEX_SHADER, vertexSrc);
     unsigned int fragment = compileShader(GL_FRAGMENT_SHADER, fragmentSrc);
 
@@ -36,29 +59,6 @@ Shader::Shader(const char* vertexSrc, const char* fragmentSrc) {
      * is to test to see if the shaders work.
      * if they do then we delete them, use them later,
     */
-}
-
-unsigned int Shader::compileShader(unsigned int type, const char* source) {
-    unsigned int shader = glCreateShader(type);
-    glShaderSource(shader, 1, &source, nullptr);
-    glCompileShader(shader);
-
-    int success;
-    char infoLog[512];
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(shader, 512, nullptr, infoLog);
-        std::cerr << "Shader compile error: " << infoLog << std::endl;
-    }
-    return shader;
-
-    /*
-     * This function runs the shader programs and returns the results of the shaders
-     */
-}
-
-void Shader::recompile(const char* vertexSrc, const char* fragmentSrc) {
-    Shader(vertexSrc, fragmentSrc);
 
 }
 
@@ -71,4 +71,8 @@ void Shader::setMat4(const std::string& name, const glm::mat4& mat) const {
 void Shader::setVec3(const std::string& name, const glm::vec3& vec) const {
     int loc = glGetUniformLocation(ID, name.c_str());
     glUniform3fv(loc, 1, &vec[0]);
+}
+
+void Shader::setFloat(const std::string &name, float val) const {
+    glUniform1f(glGetUniformLocation(ID, name.c_str()), val);
 }

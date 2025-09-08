@@ -12,6 +12,14 @@
 #include "Rendering/RenderManager.h"
 #include "Developer/DevGui.h"
 
+#include "Developer/globals.h"
+
+float GlobalAmbientStrength = 1.0f;
+glm::vec3 GlobalLightColor = glm::vec3(1.0f, 1.0f, 1.0f);
+glm::vec3 GlobalLightPos   = glm::vec3(0.0f, 0.0f, 0.0f);
+
+
+
 // Window settings
 const unsigned int WIDTH = 1200;
 const unsigned int HEIGHT = 800;
@@ -54,8 +62,6 @@ int main() {
     }
 //Testing Entities
     Entity test; // Test entity
-    Entity test2; // Test 2 entity
-    test2.Position = glm::vec3(10, 0, 0);
 
 #pragma region Shader Tests
 
@@ -72,7 +78,6 @@ int main() {
 
     Renderer.SetActiveCamera(&Cam); // sets active camera
     Renderer.AddMesh(&test.StaticMesh); // adds test mesh to renderer
-    Renderer.AddMesh(&test2.StaticMesh); // adds test mesh to renderer
     float currentTime = glfwGetTime();
     float lastFrameTime = currentTime;
     float deltaTime = currentTime - lastFrameTime;
@@ -99,7 +104,6 @@ int main() {
 
         Renderer.RenderAll(basicShader);
         test.tick(deltaTime);
-        test2.tick(deltaTime);
         GUI.DrawGui(deltaTime);
 
 

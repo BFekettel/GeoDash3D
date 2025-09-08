@@ -27,7 +27,7 @@ add_executable(Project
         external/glad/src/glad.c
         src/Entity/Entity.cpp
         src/Components/Component.cpp
-        src/Components/StaticShapeComp.cpp
+        src/Components/StaticMeshComp.cpp
         src/Components/ControllerComponent.cpp
         src/Rendering/Camera.cpp
         src/Rendering/RenderManager.cpp
@@ -43,6 +43,7 @@ add_executable(Project
         src/Rendering/Shader.h
         src/Developer/DevGui.cpp
         src/Developer/DevGui.h
+        src/Developer/globals.h
 )
 
 

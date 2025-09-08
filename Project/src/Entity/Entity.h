@@ -9,7 +9,7 @@
 #include <typeindex>
 #include <unordered_map>
 
-#include "../Components/StaticShapeComp.h"
+#include "../Components/StaticMeshComp.h"
 #include "../Components/Component.h"
 #include "../Components/ControllerComponent.h"
 
@@ -25,7 +25,7 @@ public:
     glm::vec3 Velocity = {0.0f, 0.0f, 0.0f}; // TEMP CURRENT VELOCITY
 
     //Temp Static Component
-    StaticShapeComp StaticMesh;
+    StaticMeshComp StaticMesh;
 
     //Constructor & tick
     Entity();

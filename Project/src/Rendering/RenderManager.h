@@ -3,7 +3,7 @@
 
 #include <vector>
 #include "Camera.h"
-#include "../Components/StaticShapeComp.h"
+#include "../Components/StaticMeshComp.h"
 #include "Shader.h"
 
 class RenderManager {
@@ -14,10 +14,10 @@ public:
     Camera* ActiveCamera = nullptr;
 
     // Rendering components
-    std::vector<StaticShapeComp*> Meshes;
+    std::vector<StaticMeshComp*> Meshes;
 
     void SetActiveCamera(Camera* cam) { ActiveCamera = cam; }
-    void AddMesh(StaticShapeComp* mesh) { Meshes.push_back(mesh); }
+    void AddMesh(StaticMeshComp* mesh) { Meshes.push_back(mesh); }
     void RenderAll(Shader& shader);
 
 private:
