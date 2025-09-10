@@ -20,6 +20,15 @@ public:
     void AddMesh(StaticMeshComp* mesh) { Meshes.push_back(mesh); }
     void RenderAll(Shader& shader);
 
+    // Handle window resizing
+    void OnResize(int width, int height) {
+        glViewport(0, 0, width, height);
+        if (ActiveCamera && height > 0) {
+            float aspect = static_cast<float>(width) / static_cast<float>(height);
+            ActiveCamera->SetAspect(aspect);
+        }
+    }
+
 private:
 
 };

@@ -4,6 +4,9 @@
 
 #include "DevGui.h"
 #include "globals.h"
+#include <cstdlib>
+#include <iostream>
+#include <filesystem>
 
 DevGui::DevGui(GLFWwindow* window) {
     // Setup ImGui context
@@ -15,7 +18,6 @@ DevGui::DevGui(GLFWwindow* window) {
     // Setup Platform/Renderer bindings
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
-
 }
 
 void DevGui::Cleanup() {
@@ -36,15 +38,21 @@ void DevGui::DrawGui(float &deltaTime) {
     ImGui::Text("Frame time: %.2f ms", deltaTime * 1000.0f);
     ImGui::Text("FPS: %.1f", 1.0 / deltaTime);
     ImGui::Checkbox("Toggle Culling", &toggleCulling);
-    ImGui::Checkbox("Recompile Shaders", &recompileShaders);
+
+    if (ImGui::Button("Recompile Shaders", ImVec2(-1, 0))) {
+        recompileShaders = true;
+    }
+
+    ImGui::Separator();
     ImGui::SliderFloat("Ambient Strength", &GlobalAmbientStrength, 0.0f, 1.0f);
+    ImGui::Separator();
     ImGui::SliderFloat("Global Light Color R", &GlobalLightColor.r, 0.0f, 1.0f);
     ImGui::SliderFloat("Global Light Color G", &GlobalLightColor.g, 0.0f, 1.0f);
     ImGui::SliderFloat("Global Light Color B", &GlobalLightColor.b, 0.0f, 1.0f);
+    ImGui::Separator();
     ImGui::DragFloat("Global Light Location X", &GlobalLightPos.x);
     ImGui::DragFloat("Global Light Location Y", &GlobalLightPos.y);
     ImGui::DragFloat("Global Light Location Z", &GlobalLightPos.z);
-
 
     ImGui::End();
 

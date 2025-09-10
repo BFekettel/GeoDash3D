@@ -9,7 +9,6 @@
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 
-
 class DevGui {
 
     public:
@@ -21,6 +20,7 @@ class DevGui {
 
     void Cleanup();
     void DrawGui(float &deltaTime);
+    void Tick();
 };
 
 

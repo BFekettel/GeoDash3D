@@ -184,7 +184,7 @@ void StaticMeshComp::Draw(const Shader& shader, const glm::mat4& view, const glm
         shader.setMat4("model", model);
         shader.setMat4("view", view);
         shader.setMat4("projection", projection);
-        shader.setFloat("ambientStrength", GlobalAmbientStrength);
+        shader.setFloat("ambientStrength", GlobalAmbientStrength); //NEED TO MAKE INTO OBJECT
         shader.setVec3("lightColor", GlobalLightColor);
         shader.setVec3("lightPos", GlobalLightPos);
 

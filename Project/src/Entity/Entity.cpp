@@ -17,11 +17,11 @@ void Entity::tick(float deltaTime) { //TODO: create physics manager
     Position += Velocity;
 
 
-    if (Position.y > 0) {
-        Velocity.y -= 0.01;
-    } else if (Position.y <= 0) {
-        Velocity.y = 0;
-    }
+    // if (Position.y > 0) {
+    //     Velocity.y -= 0.01;
+    // } else if (Position.y <= 0) {
+    //     Velocity.y = 0;
+    // }
 //Updates Position of mesh
     glm::mat4 model(1.0f);
     model = glm::translate(model, Position);

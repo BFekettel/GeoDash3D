@@ -31,7 +31,8 @@ add_executable(Project
         src/Components/ControllerComponent.cpp
         src/Rendering/Camera.cpp
         src/Rendering/RenderManager.cpp
-
+        src/Rendering/Shader.cpp
+        src/Developer/DevGui.cpp
         # ImGui sources
         libs/imgui/imgui.cpp
         libs/imgui/imgui_draw.cpp
@@ -39,12 +40,8 @@ add_executable(Project
         libs/imgui/imgui_widgets.cpp
         libs/imgui/backends/imgui_impl_glfw.cpp
         libs/imgui/backends/imgui_impl_opengl3.cpp
-        src/Rendering/Shader.cpp
-        src/Rendering/Shader.h
-        src/Developer/DevGui.cpp
-        src/Developer/DevGui.h
-        src/Developer/globals.h
 )
+
 
 
 # Link libraries

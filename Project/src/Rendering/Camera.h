@@ -2,8 +2,6 @@
 // Created by Ben on 19/08/2025.
 //
 
-
-
 #ifndef PROJECT_RENDERMANAGER_H
 #define PROJECT_RENDERMANAGER_H
 
@@ -14,7 +12,6 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
-
 
 class Camera {
 public:
@@ -36,7 +33,11 @@ public:
     glm::mat4 GetView() const {
         return glm::lookAt(Position, Position + Front, Up);
     }
-};
 
+    // 🔹 New: update aspect ratio
+    void SetAspect(float newAspect) {
+        aspect = newAspect;
+    }
+};
 
 #endif //PROJECT_RENDERMANAGER_H
