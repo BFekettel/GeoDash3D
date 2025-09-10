@@ -26,6 +26,8 @@ public:
     StaticMeshComp();
     ~StaticMeshComp();
 
+    unsigned int loadTexture(const char *filename);
+
     void loadModel(const char* path);
 
     void tick(float deltaTime) override {}
@@ -35,6 +37,7 @@ public:
 
 private:
     int indexCount;
+    unsigned int textureID;
 
 };
 

@@ -37,13 +37,13 @@ void DevGui::DrawGui(float &deltaTime) {
     ImGui::Text("FPS: %.1f", 1.0 / deltaTime);
     ImGui::Checkbox("Toggle Culling", &toggleCulling);
     ImGui::Checkbox("Recompile Shaders", &recompileShaders);
-    ImGui::InputFloat("Ambient Strength", &GlobalAmbientStrength);
-    ImGui::InputFloat("Global Light Color R", &GlobalLightColor.r);
-    ImGui::InputFloat("Global Light Color G", &GlobalLightColor.g);
-    ImGui::InputFloat("Global Light Color B", &GlobalLightColor.b);
-    ImGui::InputFloat("Global Light Location X", &GlobalLightPos.x);
-    ImGui::InputFloat("Global Light Location Y", &GlobalLightPos.y);
-    ImGui::InputFloat("Global Light Location Z", &GlobalLightPos.z);
+    ImGui::SliderFloat("Ambient Strength", &GlobalAmbientStrength, 0.0f, 1.0f);
+    ImGui::SliderFloat("Global Light Color R", &GlobalLightColor.r, 0.0f, 1.0f);
+    ImGui::SliderFloat("Global Light Color G", &GlobalLightColor.g, 0.0f, 1.0f);
+    ImGui::SliderFloat("Global Light Color B", &GlobalLightColor.b, 0.0f, 1.0f);
+    ImGui::DragFloat("Global Light Location X", &GlobalLightPos.x);
+    ImGui::DragFloat("Global Light Location Y", &GlobalLightPos.y);
+    ImGui::DragFloat("Global Light Location Z", &GlobalLightPos.z);
 
 
     ImGui::End();
