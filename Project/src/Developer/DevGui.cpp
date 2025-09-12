@@ -37,12 +37,26 @@ void DevGui::DrawGui(float &deltaTime) {
     ImGui::Begin("Stats");
     ImGui::Text("Frame time: %.2f ms", deltaTime * 1000.0f);
     ImGui::Text("FPS: %.1f", 1.0 / deltaTime);
-    ImGui::Checkbox("Toggle Culling", &toggleCulling);
+    if (ImGui::Button ("Toggle Culling", ImVec2(-1,0))) {
+        toggleCulling = !toggleCulling;
+        if (toggleCulling) {
+            const char *message = "Toggle Culling: On";
+            LogMessage = message;
+        } else {
+            const char *message = "Toggle Culling: Off";
+            LogMessage = message;
+        }
 
-    if (ImGui::Button("Recompile Shaders", ImVec2(-1, 0))) {
-        recompileShaders = true;
+
     }
 
+    if (ImGui::Button("Recompile Shaders", ImVec2(-1, 0))) {
+        const char *message = "Recompiling Shaders...";
+        LogMessage = message;
+        recompileShaders = true;
+    }
+    ImGui::Separator();
+    ImGui::Text(LogMessage);
     ImGui::Separator();
     ImGui::SliderFloat("Ambient Strength", &GlobalAmbientStrength, 0.0f, 1.0f);
     ImGui::Separator();

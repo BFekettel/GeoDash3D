@@ -9,6 +9,7 @@
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 
+
 class DevGui {
 
     public:
@@ -17,6 +18,7 @@ class DevGui {
 
     bool toggleCulling = true;
     bool recompileShaders = false;
+    const char *LogMessage = "Message";
 
     void Cleanup();
     void DrawGui(float &deltaTime);
