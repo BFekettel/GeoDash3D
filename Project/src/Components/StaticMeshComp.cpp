@@ -178,17 +178,24 @@ void StaticMeshComp::loadModel(const char *path) {
 
 void StaticMeshComp::Draw(const Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& cameraPos) {
     if (visible) {
-        shader.use();
+        shader.use(); //MARKED FOR RENDERER
 
         // Passing uniforms
+        // Scene data
+        shader.setMat4("view", view); //MARKED FOR RENDERER
+        shader.setMat4("projection", projection); //MARKED FOR RENDERER
+        shader.setFloat("ambientStrength", GlobalAmbientStrength); //NEED TO MAKE INTO OBJECT MARKED FOR RENDERER
+        shader.setVec3("lightColor", GlobalLightColor); //MARKED FOR RENDERER
+        shader.setVec3("lightPos", GlobalLightPos); //MARKED FOR RENDERER
+        shader.setVec3("viewPos", cameraPos); // MARKED FOR RENDERER
+        //Model Data
         shader.setMat4("model", model);
-        shader.setMat4("view", view);
-        shader.setMat4("projection", projection);
-        shader.setFloat("ambientStrength", GlobalAmbientStrength); //NEED TO MAKE INTO OBJECT
-        shader.setVec3("lightColor", GlobalLightColor);
-        shader.setVec3("lightPos", GlobalLightPos);
-        shader.setVec3("viewPos", cameraPos);
-        shader.setFloat("specularStrength", 10.0); //Need to pull from material!
+        shader.setFloat("specularStrength", 1.0); //Need to pull from material!
+        //TODO:
+        /*
+         * Add material parameters, such as shininess, specular, diffuse and ambient
+         * Split passing uniforms into another function BEGIN FRAME() for marked uniforms, do in renderer
+         */
 
         // Bind texture
         if (textureID != 0) {
