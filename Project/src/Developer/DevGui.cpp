@@ -50,10 +50,9 @@ void DevGui::DrawGui(float &deltaTime) {
     ImGui::SliderFloat("Global Light Color G", &GlobalLightColor.g, 0.0f, 1.0f);
     ImGui::SliderFloat("Global Light Color B", &GlobalLightColor.b, 0.0f, 1.0f);
     ImGui::Separator();
-    ImGui::DragFloat("Global Light Location X", &GlobalLightPos.x);
-    ImGui::DragFloat("Global Light Location Y", &GlobalLightPos.y);
-    ImGui::DragFloat("Global Light Location Z", &GlobalLightPos.z);
-
+    ImGui::DragFloat("Global Light Location X", &GlobalLightPos.x, 0.1f);
+    ImGui::DragFloat("Global Light Location Y", &GlobalLightPos.y, 0.1f);
+    ImGui::DragFloat("Global Light Location Z", &GlobalLightPos.z, 0.1f);
     ImGui::End();
 
     // Render ImGui
