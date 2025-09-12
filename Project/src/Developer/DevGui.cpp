@@ -58,7 +58,7 @@ void DevGui::DrawGui(float &deltaTime) {
     ImGui::Separator();
     ImGui::Text(LogMessage);
     ImGui::Separator();
-    ImGui::SliderFloat("Ambient Strength", &GlobalAmbientStrength, 0.0f, 1.0f);
+    ImGui::DragFloat("Ambient Strength", &GlobalAmbientStrength, 0.1f);
     ImGui::Separator();
     ImGui::SliderFloat("Global Light Color R", &GlobalLightColor.r, 0.0f, 1.0f);
     ImGui::SliderFloat("Global Light Color G", &GlobalLightColor.g, 0.0f, 1.0f);

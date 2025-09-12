@@ -31,7 +31,7 @@ public:
     void loadModel(const char* path);
 
     void tick(float deltaTime) override {}
-    void Draw(const Shader& shader, const glm::mat4& view, const glm::mat4& projection);
+    void Draw(const Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& cameraPos);
 
     bool visible = true;
 

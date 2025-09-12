@@ -176,7 +176,7 @@ void StaticMeshComp::loadModel(const char *path) {
     }
 }
 
-void StaticMeshComp::Draw(const Shader& shader, const glm::mat4& view, const glm::mat4& projection) {
+void StaticMeshComp::Draw(const Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& cameraPos) {
     if (visible) {
         shader.use();
 
@@ -187,6 +187,8 @@ void StaticMeshComp::Draw(const Shader& shader, const glm::mat4& view, const glm
         shader.setFloat("ambientStrength", GlobalAmbientStrength); //NEED TO MAKE INTO OBJECT
         shader.setVec3("lightColor", GlobalLightColor);
         shader.setVec3("lightPos", GlobalLightPos);
+        shader.setVec3("viewPos", cameraPos);
+        shader.setFloat("specularStrength", 10.0); //Need to pull from material!
 
         // Bind texture
         if (textureID != 0) {

@@ -12,6 +12,6 @@ void RenderManager::RenderAll(Shader& shader) {
      */
 
     for (auto* mesh : Meshes) {
-        mesh->Draw(shader, view, projection);
+        mesh->Draw(shader, view, projection, ActiveCamera->Position);
     }
 }
