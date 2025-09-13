@@ -14,7 +14,7 @@
 
 
 StaticMeshComp::StaticMeshComp() {
-    loadModel("../resources/models/cube.obj");
+    loadModel("../content/models/cube.obj");
 }
 
 
@@ -116,6 +116,21 @@ void StaticMeshComp::loadModel(const char *path) {
             vertices.push_back(0.0f);
         }
     }
+    aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+
+    //Mateial Data extra
+    float shininessVal;
+    if (AI_SUCCESS == material->Get(AI_MATKEY_SHININESS, shininessVal)) {
+        shininess = shininessVal;
+    } else {
+        shininess = 0.0f; //needs a default value
+    }
+    float specStrengthVal;
+    if (AI_SUCCESS == material->Get(AI_MATKEY_SHININESS_STRENGTH, specStrengthVal)) {
+        specularStrength = specStrengthVal;
+    } else {
+        specularStrength = 0.0f; //needs a default value
+    }
 
     // Indices
     for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
@@ -152,7 +167,6 @@ void StaticMeshComp::loadModel(const char *path) {
     indexCount = static_cast<unsigned int>(indices.size());
 
     // --- Load Material Texture (diffuse) ---
-    aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
     if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0) {
         aiString str;
@@ -165,8 +179,8 @@ void StaticMeshComp::loadModel(const char *path) {
         if (filename.find('/') != std::string::npos || filename.find('\\') != std::string::npos) {
             texturePath = filename;
         } else {
-            // Otherwise, assume it's in your resources/Textures directory
-            texturePath = "../resources/Textures/" + filename;
+            // Otherwise, assume it's in your content/Textures directory
+            texturePath = "../content/Textures/" + filename;
         }
 
         textureID = loadTexture(texturePath.c_str());
@@ -176,21 +190,15 @@ void StaticMeshComp::loadModel(const char *path) {
     }
 }
 
-void StaticMeshComp::Draw(const Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& cameraPos) {
+void StaticMeshComp::Draw(const Shader& shader) {
     if (visible) {
         shader.use(); //MARKED FOR RENDERER
 
         // Passing uniforms
-        // Scene data
-        shader.setMat4("view", view); //MARKED FOR RENDERER
-        shader.setMat4("projection", projection); //MARKED FOR RENDERER
-        shader.setFloat("ambientStrength", GlobalAmbientStrength); //NEED TO MAKE INTO OBJECT MARKED FOR RENDERER
-        shader.setVec3("lightColor", GlobalLightColor); //MARKED FOR RENDERER
-        shader.setVec3("lightPos", GlobalLightPos); //MARKED FOR RENDERER
-        shader.setVec3("viewPos", cameraPos); // MARKED FOR RENDERER
         //Model Data
         shader.setMat4("model", model);
-        shader.setFloat("specularStrength", 1.0); //Need to pull from material!
+        shader.setFloat("specularStrength", specularStrength); //Need to pull from material!
+        shader.setFloat("shininess", shininess);
         //TODO:
         /*
          * Add material parameters, such as shininess, specular, diffuse and ambient

@@ -19,9 +19,6 @@ class StaticMeshComp: public Component {
 public:
     unsigned int VAO{}, VBO{}, EBO{};
     glm::mat4 model{1.0f}; //Uniform for model
-    /*
-     * Uniforms allow cpu members be passed into gpu shader programs
-     */
 
     StaticMeshComp();
     ~StaticMeshComp();
@@ -31,13 +28,15 @@ public:
     void loadModel(const char* path);
 
     void tick(float deltaTime) override {}
-    void Draw(const Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& cameraPos);
+    void Draw(const Shader& shader);
 
     bool visible = true;
 
 private:
     int indexCount;
     unsigned int textureID;
+    float shininess;
+    float specularStrength;
 
 };
 

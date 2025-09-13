@@ -83,8 +83,8 @@ struct RenderResources
 {
     WGPUSampler         Sampler = nullptr;              // Sampler for textures
     WGPUBuffer          Uniforms = nullptr;             // Shader uniforms
-    WGPUBindGroup       CommonBindGroup = nullptr;      // Resources bind-group to bind the common resources to pipeline
-    ImGuiStorage        ImageBindGroups;                // Resources bind-group to bind the font/image resources to pipeline (this is a key->value map)
+    WGPUBindGroup       CommonBindGroup = nullptr;      // Resources bind-group to bind the common content to pipeline
+    ImGuiStorage        ImageBindGroups;                // Resources bind-group to bind the font/image content to pipeline (this is a key->value map)
     WGPUBindGroupLayout ImageBindGroupLayout = nullptr; // Cache layout used for the image bind group. Avoids allocating unnecessary JS objects when working with WebASM
 };
 

@@ -174,7 +174,7 @@ public:
     }
 
     // -------------------------------------------------------------------
-    /// @brief Closes the given file and releases all resources associated with it.
+    /// @brief Closes the given file and releases all content associated with it.
     void Close( IOStream* pFile) override {
         auto it = std::find(created_streams.begin(), created_streams.end(), pFile);
         if (it != created_streams.end()) {

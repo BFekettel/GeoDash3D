@@ -131,7 +131,7 @@ public:
     /** @brief Open a new file with a given path.
      *
      *  When the access to the file is finished, call Close() to release
-     *  all associated resources (or the virtual dtor of the IOStream).
+     *  all associated content (or the virtual dtor of the IOStream).
      *
      *  @param pFile Path to the file
      *  @param pMode Desired file I/O mode. Required are: "wb", "w", "wt",
@@ -153,7 +153,7 @@ public:
         const std::string& pMode = std::string("rb"));
 
     // -------------------------------------------------------------------
-    /** @brief Closes the given file and releases all resources
+    /** @brief Closes the given file and releases all content
      *    associated with it.
      *  @param pFile The file instance previously created by Open().
      */

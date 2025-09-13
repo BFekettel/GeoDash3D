@@ -71,7 +71,7 @@ public:
     IOStream* Open( const char* pFile, const char* pMode = "rb") override;
 
     // -------------------------------------------------------------------
-    /** Closes the given file and releases all resources associated with it. */
+    /** Closes the given file and releases all content associated with it. */
     void Close( IOStream* pFile) override;
 
     // -------------------------------------------------------------------

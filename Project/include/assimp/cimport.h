@@ -105,7 +105,7 @@ typedef int aiBool;
  * If the call succeeds, the imported data is returned in an aiScene structure.
  * The data is intended to be read-only, it stays property of the ASSIMP
  * library and will be stable until aiReleaseImport() is called. After you're
- * done with it, call aiReleaseImport() to free the resources associated with
+ * done with it, call aiReleaseImport() to free the content associated with
  * this file. If the import fails, NULL is returned instead. Call
  * aiGetErrorString() to retrieve a human-readable error text.
  * @param pFile Path and filename of the file to be imported,
@@ -126,7 +126,7 @@ ASSIMP_API const C_STRUCT aiScene *aiImportFile(
  * If the call succeeds, the imported data is returned in an aiScene structure.
  * The data is intended to be read-only, it stays property of the ASSIMP
  * library and will be stable until aiReleaseImport() is called. After you're
- * done with it, call aiReleaseImport() to free the resources associated with
+ * done with it, call aiReleaseImport() to free the content associated with
  * this file. If the import fails, NULL is returned instead. Call
  * aiGetErrorString() to retrieve a human-readable error text.
  * @param pFile Path and filename of the file to be imported,
@@ -173,7 +173,7 @@ ASSIMP_API const C_STRUCT aiScene *aiImportFileExWithProperties(
  * If the call succeeds, the imported data is returned in an aiScene structure.
  * The data is intended to be read-only, it stays property of the ASSIMP
  * library and will be stable until aiReleaseImport() is called. After you're
- * done with it, call aiReleaseImport() to free the resources associated with
+ * done with it, call aiReleaseImport() to free the content associated with
  * this file. If the import fails, NULL is returned.
  * A human-readable error description can be retrieved by calling aiGetErrorString().
  * @param pBuffer Pointer to the file data
@@ -320,7 +320,7 @@ ASSIMP_API C_ENUM aiReturn aiDetachLogStream(
 // --------------------------------------------------------------------------------
 /** Detach all active log streams from the libraries' logging system.
  *  This ensures that the logging system is terminated properly and all
- *  resources allocated by it are actually freed. If you attached a stream,
+ *  content allocated by it are actually freed. If you attached a stream,
  *  don't forget to detach it again.
  *  @see aiAttachLogStream
  *  @see aiDetachLogStream
@@ -328,7 +328,7 @@ ASSIMP_API C_ENUM aiReturn aiDetachLogStream(
 ASSIMP_API void aiDetachAllLogStreams(void);
 
 // --------------------------------------------------------------------------------
-/** Releases all resources associated with the given import process.
+/** Releases all content associated with the given import process.
  *
  * Call this function after you're done with the imported data.
  * @param pScene The imported data to release. NULL is a valid value.
