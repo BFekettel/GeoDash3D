@@ -8,16 +8,34 @@
 #include <iostream>
 #include <filesystem>
 
-DevGui::DevGui(GLFWwindow* window) {
-    // Setup ImGui context
+// DevGui::DevGui(GLFWwindow* window) {
+//     // Setup ImGui context
+//     IMGUI_CHECKVERSION();
+//     ImGui::CreateContext();
+//     ImGuiIO& io = ImGui::GetIO(); (void)io;
+//     ImGui::StyleColorsDark();
+//
+//     // Setup Platform/Renderer bindings
+//     ImGui_ImplGlfw_InitForOpenGL(window, true);
+//     ImGui_ImplOpenGL3_Init("#version 330");
+// }
+
+DevGui::DevGui() : window(nullptr), initialized(false) {}
+
+
+
+void DevGui::Init(GLFWwindow* win) {
+    if (initialized) return; // prevent double init
+    window = win;
+
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    ImGui::StyleColorsDark();
 
-    // Setup Platform/Renderer bindings
+    ImGui::StyleColorsDark();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
+
+    initialized = true;
 }
 
 void DevGui::Cleanup() {
@@ -28,6 +46,7 @@ void DevGui::Cleanup() {
 }
 
 void DevGui::DrawGui(float &deltaTime) {
+    if (!initialized) return;
     // Start ImGui frame
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
@@ -37,6 +56,8 @@ void DevGui::DrawGui(float &deltaTime) {
     ImGui::Begin("Stats");
     ImGui::Text("Frame time: %.2f ms", deltaTime * 1000.0f);
     ImGui::Text("FPS: %.1f", 1.0 / deltaTime);
+    ImGui::Text("Draw time: %.2f ms", drawTime * 1000.0f);
+    ImGui::Separator();
     if (ImGui::Button ("Toggle Culling", ImVec2(-1,0))) {
         toggleCulling = !toggleCulling;
         if (toggleCulling) {
@@ -46,8 +67,6 @@ void DevGui::DrawGui(float &deltaTime) {
             const char *message = "Toggle Culling: Off";
             LogMessage = message;
         }
-
-
     }
 
     if (ImGui::Button("Recompile Shaders", ImVec2(-1, 0))) {

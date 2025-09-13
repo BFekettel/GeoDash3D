@@ -1,11 +1,12 @@
 ﻿#include "RenderManager.h"
-#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 #include "../Developer/globals.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 void RenderManager::RenderAll(Shader& shader) {
     if (!ActiveCamera) return;
-
+    //delta time
+    currentTime = glfwGetTime();
     glm::mat4 view = ActiveCamera->GetView();
     glm::mat4 projection = ActiveCamera->GetProjection();
     /*
@@ -23,4 +24,9 @@ void RenderManager::RenderAll(Shader& shader) {
     for (auto* mesh : Meshes) {
         mesh->Draw(shader);
     }
+
+    //this is to test the tick time for rendering
+    deltaTime = currentTime - lastFrameTime;
+    lastFrameTime = currentTime;
+    Globaldevgui.drawTime = deltaTime;
 }

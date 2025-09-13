@@ -12,17 +12,25 @@
 
 class DevGui {
 
-    public:
-    explicit DevGui(GLFWwindow* window);
+public:
+    DevGui();
     ~DevGui() = default;
+    void Init(GLFWwindow* window);
+    //explicit DevGui(GLFWwindow* window);
+
 
     bool toggleCulling = true;
     bool recompileShaders = false;
     const char *LogMessage = "Message";
+    float drawTime = 0.0f;
 
     void Cleanup();
     void DrawGui(float &deltaTime);
     void Tick();
+
+private:
+    GLFWwindow* window = nullptr;
+    bool initialized = false;
 };
 
 

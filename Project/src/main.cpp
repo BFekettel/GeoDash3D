@@ -11,20 +11,20 @@
 #include "Rendering/Camera.h"
 #include "Rendering/RenderManager.h"
 #include "Developer/DevGui.h"
-
 #include "Developer/globals.h"
 
+//Globals
 float GlobalAmbientStrength = 1.0f;
 glm::vec3 GlobalLightColor = glm::vec3(1.0f, 1.0f, 1.0f);
 glm::vec3 GlobalLightPos = glm::vec3(0.0f);
-
+DevGui Globaldevgui;
 
 
 // Window settings
 const unsigned int WIDTH = 1200;
 const unsigned int HEIGHT = 800;
 
-//TEMP LOADING SHADERS
+//TEMP LOADING SHADERS TODO: add to shader object
 std::string LoadShaderSource(const std::string& filePath) {
     std::ifstream file(filePath);
     if (!file.is_open()) {
@@ -64,6 +64,7 @@ int main() {
         return -1;
     }
     glfwMakeContextCurrent(window);
+    glfwSwapInterval(0); //Frame limiter, 1.0 / Desired FPS, or use 0 for uncapped
 
     // Init GLAD
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -104,16 +105,17 @@ int main() {
 
 #pragma endregion
 
-#pragma region GUI Setup
+#pragma region Delta Setup
     float currentTime = glfwGetTime();
     float lastFrameTime = currentTime;
     float deltaTime = currentTime - lastFrameTime;
 
-    //IMGUI object
-    DevGui GUI(window);
+
+
 #pragma endregion
+    //IMGUI object
 
-
+    Globaldevgui.Init(window);
 
     //MAIN LOOP
     while (!glfwWindowShouldClose(window)) {
@@ -130,7 +132,7 @@ int main() {
 
         Renderer.RenderAll(basicShader);
         test.tick(deltaTime);
-        GUI.DrawGui(deltaTime);
+        Globaldevgui.DrawGui(deltaTime);
 
         light.tick(deltaTime);
         light.Position = GlobalLightPos;
@@ -182,7 +184,7 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //clear depth
 
 #pragma region Dev GUI
-        if (GUI.toggleCulling) { //toggle in ImGUI
+        if (Globaldevgui.toggleCulling) { //toggle in ImGUI
             glEnable(GL_CULL_FACE); // enable culling
             glCullFace(GL_BACK); // cull back faces
             glFrontFace(GL_CCW); // counter-clockwise winding = front face
@@ -192,12 +194,12 @@ int main() {
 
 
 
-        if (GUI.recompileShaders) {
+        if (Globaldevgui.recompileShaders) {
             basicShader.recompile(
         LoadShaderSource("../shaders/basic.vert").c_str(),
         LoadShaderSource("../shaders/basic.frag").c_str()
             );
-            GUI.recompileShaders = false;
+            Globaldevgui.recompileShaders = false;
         }
 #pragma endregion
 
@@ -205,7 +207,7 @@ int main() {
 
 
     //GUI cleanup
-    GUI.Cleanup();
+    Globaldevgui.Cleanup();
 
     glfwTerminate();
     return 0;

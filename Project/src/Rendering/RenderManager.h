@@ -30,6 +30,9 @@ public:
     }
 
 private:
+    float currentTime = glfwGetTime();
+    float lastFrameTime = currentTime;
+    float deltaTime = currentTime - lastFrameTime;
 
 };
 

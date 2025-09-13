@@ -5,12 +5,12 @@
 #define PROJECT_GLOBALS_H
 
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include "DevGui.h"
 
 extern float GlobalAmbientStrength;
 extern glm::vec3 GlobalLightColor;
 extern glm::vec3 GlobalLightPos;
+extern DevGui Globaldevgui;
 
 
 #endif //PROJECT_GLOBALS_H
