@@ -25,17 +25,7 @@ const unsigned int WIDTH = 1200;
 const unsigned int HEIGHT = 800;
 
 //TEMP LOADING SHADERS TODO: add to shader object
-std::string LoadShaderSource(const std::string& filePath) {
-    std::ifstream file(filePath);
-    if (!file.is_open()) {
-        std::cerr << "Failed to open shader file: " << filePath << std::endl;
-        return "";
-    }
 
-    std::stringstream buffer;
-    buffer << file.rdbuf();
-    return buffer.str();
-}
 
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
@@ -64,7 +54,12 @@ int main() {
         return -1;
     }
     glfwMakeContextCurrent(window);
-    glfwSwapInterval(0); //Frame limiter, 1.0 / Desired FPS, or use 0 for uncapped
+    glfwSwapInterval(1); // Frame limter
+    /*
+     * 1 = monitor speed
+     * 0 = uncapped
+     * 2 = 50% cap
+     */
 
     // Init GLAD
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -84,10 +79,8 @@ int main() {
 
 #pragma region Shader Tests
 
-    Shader basicShader(
-    LoadShaderSource("../shaders/basic.vert").c_str(),
-    LoadShaderSource("../shaders/basic.frag").c_str()
-);
+    Shader basicShader;
+    basicShader.recompile();
 
 #pragma endregion
 
@@ -195,11 +188,9 @@ int main() {
 
 
         if (Globaldevgui.recompileShaders) {
-            basicShader.recompile(
-        LoadShaderSource("../shaders/basic.vert").c_str(),
-        LoadShaderSource("../shaders/basic.frag").c_str()
-            );
+            basicShader.recompile();
             Globaldevgui.recompileShaders = false;
+            Globaldevgui.LogMessage = "Shaders Compiled";
         }
 #pragma endregion
 

@@ -6,9 +6,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
-Shader::Shader(const char* vertexSrc, const char* fragmentSrc) {
-    recompile(vertexSrc, fragmentSrc);
-}
+Shader::Shader() : ID(0) {}
 
 unsigned int Shader::compileShader(unsigned int type, const char* source) {
     unsigned int shader = glCreateShader(type);
@@ -29,38 +27,45 @@ unsigned int Shader::compileShader(unsigned int type, const char* source) {
      */
 }
 
-void Shader::recompile(const char* vertexSrc, const char* fragmentSrc) {
-    unsigned int vertex = compileShader(GL_VERTEX_SHADER, vertexSrc);
-    unsigned int fragment = compileShader(GL_FRAGMENT_SHADER, fragmentSrc);
+void Shader::recompile() {
+    // Load shader source code from files
+    std::string vertexCode = loadShaderSource(vertexSrcPath);
+    std::string fragmentCode = loadShaderSource(fragmentSrcPath);
 
-    ID = glCreateProgram(); //Create program and assign ID
-    /*
-     * Vertex Shader adds in the shape of the object, plots the vertices and the connected polygons
-     * Fragment Shader adds in the colour of the object
-     */
-    glAttachShader(ID, vertex); //Uses Vertex Shader Program
-    glAttachShader(ID, fragment); //Uses Fragment Shader Program
+    if (vertexCode == "ERROR" || fragmentCode == "ERROR") {
+        std::cerr << "Shader source loading failed!" << std::endl;
+        return;
+    }
+
+    const char* vSrc = vertexCode.c_str();
+    const char* fSrc = fragmentCode.c_str();
+
+    // Compile shaders
+    unsigned int vertexShader = compileShader(GL_VERTEX_SHADER, vSrc);
+    unsigned int fragmentShader = compileShader(GL_FRAGMENT_SHADER, fSrc);
+
+    // Create program
+    ID = glCreateProgram();
+    glAttachShader(ID, vertexShader);
+    glAttachShader(ID, fragmentShader);
     glLinkProgram(ID);
 
+    // Check linking errors
     int success;
     char infoLog[512];
-    glGetProgramiv(ID, GL_LINK_STATUS, &success); //Sees if Shader programs worked
+    glGetProgramiv(ID, GL_LINK_STATUS, &success);
     if (!success) {
         glGetProgramInfoLog(ID, 512, nullptr, infoLog);
         std::cerr << "Shader linking failed: " << infoLog << std::endl;
     } else {
-        std::cout << "Shader linked" << std::endl;
+        std::cout << "Shader linked successfully." << std::endl;
     }
 
-    glDeleteShader(vertex);
-    glDeleteShader(fragment);
-
-    /* the goal of the above, attaching shaders and deleting it,
-     * is to test to see if the shaders work.
-     * if they do then we delete them, use them later,
-    */
-
+    // Delete shaders after linking
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
 }
+
 
 
 void Shader::setMat4(const std::string& name, const glm::mat4& mat) const {
@@ -79,4 +84,16 @@ void Shader::setFloat(const std::string &name, float val) const {
 
 void Shader::setInt(const std::string &name, int val) const {
     glUniform1i(glGetUniformLocation(ID, name.c_str()), val);
+}
+
+std::string Shader::loadShaderSource(const std::string &filePath) {
+    std::ifstream file(filePath);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open shader file: " << filePath << std::endl;
+        return "ERROR";
+    }
+
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    return buffer.str();
 }
