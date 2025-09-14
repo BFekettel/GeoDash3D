@@ -12,11 +12,14 @@
 #include "Rendering/RenderManager.h"
 #include "Developer/DevGui.h"
 #include "Developer/globals.h"
+#include "Components/RadiusLightComp.h"
 
 //Globals
-float GlobalAmbientStrength = 1.0f;
+float GlobalLightIntensity = 1.0f;
 glm::vec3 GlobalLightColor = glm::vec3(1.0f, 1.0f, 1.0f);
-glm::vec3 GlobalLightPos = glm::vec3(0.0f);
+glm::vec3 GlobalLightPos = glm::vec3(0.0f, 1.5f, 1.0f);
+float GlobalLightRadius = 10.0f;
+float GlobalLightGradient = 1.0f;
 DevGui Globaldevgui;
 
 
@@ -71,10 +74,10 @@ int main() {
 
 //Testing Entities
     Entity test; // Test entity
-    Entity light;
+    LightEntity light; // Test Light
 
     light.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
-
+    light.AddComponent<RadiusLightComp>(); //Adds light component
 
 
 #pragma region Shader Tests
@@ -95,6 +98,7 @@ int main() {
     Renderer.SetActiveCamera(&Cam); // sets active camera
     Renderer.AddMesh(&test.StaticMesh); // adds test mesh to renderer
     Renderer.AddMesh(&light.StaticMesh);
+    Renderer.Light = &light;
 
 #pragma endregion
 
@@ -129,6 +133,10 @@ int main() {
 
         light.tick(deltaTime);
         light.Position = GlobalLightPos;
+        light.setIntensity(GlobalLightIntensity);
+        light.setColor(GlobalLightColor);
+        light.setRadius(GlobalLightRadius);
+        light.setGradient(GlobalLightGradient);
 
 
 #pragma region Camera Movement

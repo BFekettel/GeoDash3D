@@ -8,12 +8,12 @@
 
 #include "Component.h"
 
-#include <glad/glad.h>
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <iostream>
-#include <GLFW/glfw3.h>
+#include <assimp/scene.h>
+
 
 class StaticMeshComp: public Component {
 public:
@@ -33,10 +33,13 @@ public:
     bool visible = true;
 
 private:
+    void loadMaterial(aiMaterial* material);
+
     int indexCount;
     unsigned int textureID;
     float shininess;
     float specularStrength;
+    glm::vec3 ambient;
 
 };
 

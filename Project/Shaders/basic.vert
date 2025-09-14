@@ -14,12 +14,18 @@ uniform mat4 view;
 uniform mat4 projection;
 
 void main() {
+    // Final clip-space position
     gl_Position = projection * view * model * vec4(aPos, 1.0);
 
+    // World-space fragment position
     FragPos = vec3(model * vec4(aPos, 1.0));
+
+    // Vertex color passthrough
     ourColor = aColor;
 
-    Normal = mat3(transpose(inverse(model))) * aNormal;
+    // Proper normal transform (normal matrix)
+    Normal = normalize(mat3(transpose(inverse(model))) * aNormal);
 
+    // Texture coordinate passthrough
     TexCoord = aTexCoord;
 }

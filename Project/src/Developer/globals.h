@@ -7,9 +7,11 @@
 #include <glm/glm.hpp>
 #include "DevGui.h"
 
-extern float GlobalAmbientStrength;
+extern float GlobalLightIntensity;
 extern glm::vec3 GlobalLightColor;
 extern glm::vec3 GlobalLightPos;
+extern float GlobalLightRadius;
+extern float GlobalLightGradient;
 extern DevGui Globaldevgui;
 
 

@@ -54,38 +54,53 @@ void DevGui::DrawGui(float &deltaTime) {
 
     // Draw frame stats
     ImGui::Begin("Stats");
-    ImGui::Text("Frame time: %.2f ms", deltaTime * 1000.0f);
-    ImGui::Text("FPS: %.1f", 1.0 / deltaTime);
-    ImGui::Text("Draw time: %.2f ms", drawTime * 1000.0f);
-    ImGui::Separator();
-    if (ImGui::Button ("Toggle Culling", ImVec2(-1,0))) {
-        toggleCulling = !toggleCulling;
-        if (toggleCulling) {
-            const char *message = "Toggle Culling: On";
+
+    // Stats
+    if (ImGui::CollapsingHeader("Stats")) {
+        ImGui::Text("Frame time: %.2f ms", deltaTime * 1000.0f);
+        ImGui::Text("FPS: %.1f", 1.0 / deltaTime);
+        ImGui::Text("Draw time: %.2f ms", drawTime * 1000.0f);
+    }
+    // Options
+    if (ImGui::CollapsingHeader("Options")) {
+        if (ImGui::Button ("Toggle Culling", ImVec2(-1,0))) {
+            toggleCulling = !toggleCulling;
+            if (toggleCulling) {
+                const char *message = "Toggle Culling: On";
+                LogMessage = message;
+            } else {
+                const char *message = "Toggle Culling: Off";
+                LogMessage = message;
+            }
+        }
+
+
+        if (ImGui::Button("Recompile Shaders", ImVec2(-1, 0))) {
+            const char *message = "Recompiling Shaders...";
             LogMessage = message;
-        } else {
-            const char *message = "Toggle Culling: Off";
-            LogMessage = message;
+            recompileShaders = true;
         }
     }
 
-    if (ImGui::Button("Recompile Shaders", ImVec2(-1, 0))) {
-        const char *message = "Recompiling Shaders...";
-        LogMessage = message;
-        recompileShaders = true;
+    // Light testing
+    if (ImGui::CollapsingHeader("Light testing")) {
+        ImGui::DragFloat("Light Intensity", &GlobalLightIntensity, 0.1f);
+        ImGui::Separator();
+        ImGui::SliderFloat("Global Light Color R", &GlobalLightColor.r, 0.0f, 1.0f);
+        ImGui::SliderFloat("Global Light Color G", &GlobalLightColor.g, 0.0f, 1.0f);
+        ImGui::SliderFloat("Global Light Color B", &GlobalLightColor.b, 0.0f, 1.0f);
+        ImGui::Separator();
+        ImGui::DragFloat("Global Light Location X", &GlobalLightPos.x, 0.1f);
+        ImGui::DragFloat("Global Light Location Y", &GlobalLightPos.y, 0.1f);
+        ImGui::DragFloat("Global Light Location Z", &GlobalLightPos.z, 0.1f);
+        ImGui::Separator();
+        ImGui::DragFloat("Global Light Radius", &GlobalLightRadius, 0.1f);
+        ImGui::SliderFloat("Global Light Gradient", &GlobalLightGradient, 0.0f, 1.0f);
     }
-    ImGui::Separator();
+    ImGui::Text("Log: ");
     ImGui::Text(LogMessage);
-    ImGui::Separator();
-    ImGui::DragFloat("Ambient Strength", &GlobalAmbientStrength, 0.1f);
-    ImGui::Separator();
-    ImGui::SliderFloat("Global Light Color R", &GlobalLightColor.r, 0.0f, 1.0f);
-    ImGui::SliderFloat("Global Light Color G", &GlobalLightColor.g, 0.0f, 1.0f);
-    ImGui::SliderFloat("Global Light Color B", &GlobalLightColor.b, 0.0f, 1.0f);
-    ImGui::Separator();
-    ImGui::DragFloat("Global Light Location X", &GlobalLightPos.x, 0.1f);
-    ImGui::DragFloat("Global Light Location Y", &GlobalLightPos.y, 0.1f);
-    ImGui::DragFloat("Global Light Location Z", &GlobalLightPos.z, 0.1f);
+
+
     ImGui::End();
 
     // Render ImGui

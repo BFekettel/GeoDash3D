@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "../Components/StaticMeshComp.h"
 #include "Shader.h"
+#include "../Entity/LightEntity.h"
 
 class RenderManager {
 public:
@@ -28,6 +29,8 @@ public:
             ActiveCamera->SetAspect(aspect);
         }
     }
+
+    LightEntity* Light; //TEMP TODO: make this... better? need to be able to hold multiple lights lol
 
 private:
     float currentTime = glfwGetTime();

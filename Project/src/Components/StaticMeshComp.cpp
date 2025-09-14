@@ -5,7 +5,6 @@
 #include "StaticMeshComp.h"
 #include "../Entity/Entity.h"
 #include <assimp/Importer.hpp>
-#include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -116,21 +115,10 @@ void StaticMeshComp::loadModel(const char *path) {
             vertices.push_back(0.0f);
         }
     }
-    aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
-    //Mateial Data extra
-    float shininessVal;
-    if (AI_SUCCESS == material->Get(AI_MATKEY_SHININESS, shininessVal)) {
-        shininess = shininessVal;
-    } else {
-        shininess = 0.0f; //needs a default value
-    }
-    float specStrengthVal;
-    if (AI_SUCCESS == material->Get(AI_MATKEY_SHININESS_STRENGTH, specStrengthVal)) {
-        specularStrength = specStrengthVal;
-    } else {
-        specularStrength = 0.0f; //needs a default value
-    }
+    // --- Load Material Texture (diffuse) ---
+    aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+    loadMaterial(material);
 
     // Indices
     for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
@@ -166,8 +154,47 @@ void StaticMeshComp::loadModel(const char *path) {
 
     indexCount = static_cast<unsigned int>(indices.size());
 
-    // --- Load Material Texture (diffuse) ---
 
+
+}
+
+void StaticMeshComp::Draw(const Shader& shader) {
+    if (!visible) return;
+
+    shader.use(); // Activate shader
+
+    // --- Pass model matrix ---
+    shader.setMat4("model", model);
+
+    // --- Pass material ---
+    // Texture
+    if (textureID != 0) {
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, textureID);
+        shader.setInt("material.diffuse", 0);
+    }
+
+    // Specular color (from material or default to white)
+    glm::vec3 specColor = glm::vec3(specularStrength);
+    shader.setVec3("material.specular", specColor);
+
+    // Shininess
+    shader.setFloat("material.shininess", shininess > 0.0f ? shininess : 32.0f);
+
+    // Ambient
+    shader.setVec3("material.ambient", ambient);
+
+    // --- Draw ---
+    glBindVertexArray(VAO);
+    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+
+    // Unbind texture for safety
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void StaticMeshComp::loadMaterial(aiMaterial* material) {
+    // --- Diffuse Texture ---
     if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0) {
         aiString str;
         material->GetTexture(aiTextureType_DIFFUSE, 0, &str);
@@ -175,49 +202,37 @@ void StaticMeshComp::loadModel(const char *path) {
         std::string filename = str.C_Str();
         std::string texturePath;
 
-        // If Assimp gives a path with directories, use it
-        if (filename.find('/') != std::string::npos || filename.find('\\') != std::string::npos) {
+        if (filename.find('/') != std::string::npos || filename.find('\\') != std::string::npos)
             texturePath = filename;
-        } else {
-            // Otherwise, assume it's in your content/Textures directory
+        else
             texturePath = "../content/Textures/" + filename;
-        }
 
         textureID = loadTexture(texturePath.c_str());
     } else {
         std::cout << "No diffuse texture found in material\n";
         textureID = 0;
     }
-}
 
-void StaticMeshComp::Draw(const Shader& shader) {
-    if (visible) {
-        shader.use(); //MARKED FOR RENDERER
+    // --- Ambient Color ---
+    aiColor3D ambientColor;
+    if (AI_SUCCESS != material->Get(AI_MATKEY_COLOR_AMBIENT, ambientColor))
+        ambientColor = aiColor3D(0.1f, 0.1f, 0.1f);
+    ambient = glm::vec3(ambientColor.r, ambientColor.g, ambientColor.b);
 
-        // Passing uniforms
-        //Model Data
-        shader.setMat4("model", model);
-        shader.setFloat("specularStrength", specularStrength); //Need to pull from material!
-        shader.setFloat("shininess", shininess);
-        //TODO:
-        /*
-         * Add material parameters, such as shininess, specular, diffuse and ambient
-         * Split passing uniforms into another function BEGIN FRAME() for marked uniforms, do in renderer
-         */
-
-        // Bind texture
-        if (textureID != 0) {
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, textureID);
-            shader.setInt("texture1", 0); // match sampler2D in fragment shader
-        }
-
-        // Draw mesh
-        glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0);
-
-        // (optional) unbind texture if you want to be safe
-        glBindTexture(GL_TEXTURE_2D, 0);
+    // --- Specular Color ---
+    aiColor3D specColor;
+    if (AI_SUCCESS != material->Get(AI_MATKEY_COLOR_SPECULAR, specColor)) {
+        specColor = aiColor3D(1.0f, 1.0f, 1.0f); // default
+        std::cout << "Failed to get Specular color, using default\n";
     }
+    specularStrength = glm::max(glm::max(specColor.r, specColor.g), specColor.b); // use max channel as scalar
+
+    // --- Shininess ---
+    float shininessVal;
+    if (AI_SUCCESS != material->Get(AI_MATKEY_SHININESS, shininessVal)) {
+        shininessVal = 32.0f;
+        std::cout << "Failed to get shininess, using default 32\n";
+    }
+    shininess = shininessVal;
 }
+
