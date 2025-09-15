@@ -74,10 +74,12 @@ int main() {
 
 //Testing Entities
     Entity test; // Test entity
+    Entity test2; // Test entity
     LightEntity light; // Test Light
 
     light.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
-    light.AddComponent<RadiusLightComp>(); //Adds light component
+    test2.Position = glm::vec3(0.0f, -2.0f, 1.0f);
+
 
 
 #pragma region Shader Tests
@@ -98,6 +100,7 @@ int main() {
     Renderer.SetActiveCamera(&Cam); // sets active camera
     Renderer.AddMesh(&test.StaticMesh); // adds test mesh to renderer
     Renderer.AddMesh(&light.StaticMesh);
+    Renderer.AddMesh(&test2.StaticMesh);
     Renderer.Light = &light;
 
 #pragma endregion
@@ -129,6 +132,7 @@ int main() {
 
         Renderer.RenderAll(basicShader);
         test.tick(deltaTime);
+        test2.tick(deltaTime);
         Globaldevgui.DrawGui(deltaTime);
 
         light.tick(deltaTime);

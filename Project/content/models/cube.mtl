@@ -1,7 +1,7 @@
 # Cube material in Phong-style for OpenGL/Assimp
 
 newmtl Material
-Ka 0.100000 0.100000 0.100000    # Ambient
+Ka 0.200000 0.200000 0.200000    # Ambient
 Kd 1.000000 1.000000 1.000000    # Diffuse
 Ks 0.100000 0.100000 0.100000    # Specular
 Ke 0.000000 0.000000 0.000000    # Emissive
