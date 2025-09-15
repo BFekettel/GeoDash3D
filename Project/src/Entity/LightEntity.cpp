@@ -9,6 +9,7 @@ LightEntity::LightEntity() {
     setColor(glm::vec3(1.0f, 1.0f, 1.0f));
     setGradient(0.5f);
     setRadius(50.0f);
+
 }
 
 glm::vec3 LightEntity::getColor() {

@@ -11,13 +11,11 @@
 
 #include "../Developer/globals.h"
 
-
 StaticMeshComp::StaticMeshComp() {
     loadModel("../content/models/cube.obj");
 }
 
-
-StaticMeshComp::~StaticMeshComp() { //deletes buffers
+StaticMeshComp::~StaticMeshComp() { // deletes buffers
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
@@ -65,7 +63,10 @@ void StaticMeshComp::loadModel(const char *path) {
     // Model Loading
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile(path,
-        aiProcess_Triangulate | aiProcess_FlipUVs);
+        aiProcess_Triangulate |
+        aiProcess_FlipUVs |
+        aiProcess_GenSmoothNormals |
+        aiProcess_CalcTangentSpace);
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
         std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
@@ -101,9 +102,7 @@ void StaticMeshComp::loadModel(const char *path) {
             vertices.push_back(mesh->mNormals[i].y);
             vertices.push_back(mesh->mNormals[i].z);
         } else {
-            vertices.push_back(0.0f);
-            vertices.push_back(0.0f);
-            vertices.push_back(0.0f);
+            vertices.insert(vertices.end(), {0.0f, 0.0f, 0.0f});
         }
 
         // Texture Coordinates
@@ -114,9 +113,22 @@ void StaticMeshComp::loadModel(const char *path) {
             vertices.push_back(0.0f);
             vertices.push_back(0.0f);
         }
+
+        // Tangent
+        if (mesh->HasTangentsAndBitangents()) {
+            vertices.push_back(mesh->mTangents[i].x);
+            vertices.push_back(mesh->mTangents[i].y);
+            vertices.push_back(mesh->mTangents[i].z);
+
+            vertices.push_back(mesh->mBitangents[i].x);
+            vertices.push_back(mesh->mBitangents[i].y);
+            vertices.push_back(mesh->mBitangents[i].z);
+        } else {
+            vertices.insert(vertices.end(), {0.0f,0.0f,0.0f, 0.0f,0.0f,0.0f});
+        }
     }
 
-    // --- Load Material Texture (diffuse) ---
+    // --- Load Material ---
     aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
     loadMaterial(material);
 
@@ -137,59 +149,70 @@ void StaticMeshComp::loadModel(const char *path) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
 
-    // Attributes: pos(3) + color(3) + normal(3) + texcoord(2)
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)0);
+    // Layout: pos(3) + color(3) + normal(3) + texcoord(2) + tangent(3) + bitangent(3) = 17 floats
+    GLsizei stride = 17 * sizeof(float);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);                     // Position
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));   // Color
     glEnableVertexAttribArray(1);
 
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(6 * sizeof(float)));
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, stride, (void*)(6 * sizeof(float)));   // Normal
     glEnableVertexAttribArray(2);
 
-    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(9 * sizeof(float)));
+    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, stride, (void*)(9 * sizeof(float)));   // TexCoord
     glEnableVertexAttribArray(3);
+
+    glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, stride, (void*)(11 * sizeof(float)));  // Tangent
+    glEnableVertexAttribArray(4);
+
+    glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, stride, (void*)(14 * sizeof(float)));  // Bitangent
+    glEnableVertexAttribArray(5);
 
     glBindVertexArray(0);
 
     indexCount = static_cast<unsigned int>(indices.size());
-
-
-
 }
 
 void StaticMeshComp::Draw(const Shader& shader) {
     if (!visible) return;
 
-    shader.use(); // Activate shader
+    shader.use();
 
-    // --- Pass model matrix ---
+    // Pass model matrix
     shader.setMat4("model", model);
 
-    // --- Pass material ---
-    // Texture
+    // --- Diffuse ---
     if (textureID != 0) {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textureID);
         shader.setInt("material.diffuse", 0);
     }
 
-    // Specular color (from material or default to white)
-    glm::vec3 specColor = glm::vec3(specularStrength);
-    shader.setVec3("material.specular", specColor);
+    // --- Normal Map ---
+    if (normalMapID != 0) {
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, normalMapID);
+        shader.setInt("material.normalMap", 1);
+    }
+
+    // --- Specular Map ---
+    if (specularMapID != 0) {
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, specularMapID);
+        shader.setInt("material.specularMap", 2);
+    }
 
     // Shininess
-    shader.setFloat("material.shininess", shininess > 0.0f ? shininess : 32.0f);
+    shader.setFloat("material.shininess", shininess);
 
-    // Ambient
-    shader.setVec3("material.ambient", ambient);
-
-    // --- Draw ---
+    // Draw
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 
-    // Unbind texture for safety
+    // Unbind textures
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
@@ -200,17 +223,37 @@ void StaticMeshComp::loadMaterial(aiMaterial* material) {
         material->GetTexture(aiTextureType_DIFFUSE, 0, &str);
 
         std::string filename = str.C_Str();
-        std::string texturePath;
-
-        if (filename.find('/') != std::string::npos || filename.find('\\') != std::string::npos)
-            texturePath = filename;
-        else
-            texturePath = "../content/Textures/" + filename;
-
+        std::string texturePath = "../content/Textures/" + filename;
         textureID = loadTexture(texturePath.c_str());
     } else {
-        std::cout << "No diffuse texture found in material\n";
         textureID = 0;
+        std::cout << "No diffuse texture found in material\n";
+    }
+
+    // --- Normal Map (OBJ uses HEIGHT/BUMP, FBX uses NORMALS) ---
+    aiString str;
+    if (material->GetTexture(aiTextureType_NORMALS, 0, &str) == AI_SUCCESS ||
+        material->GetTexture(aiTextureType_HEIGHT, 0, &str) == AI_SUCCESS) {
+
+        std::string filename = str.C_Str();
+        std::string texturePath = "../content/Textures/" + filename;
+        normalMapID = loadTexture(texturePath.c_str());
+    } else {
+        normalMapID = 0;
+        std::cout << "No normal map found in material\n";
+    }
+
+    // --- Specular Map ---
+    if (material->GetTextureCount(aiTextureType_SPECULAR) > 0) {
+        aiString str;
+        material->GetTexture(aiTextureType_SPECULAR, 0, &str);
+
+        std::string filename = str.C_Str();
+        std::string texturePath = "../content/Textures/" + filename;
+        specularMapID = loadTexture(texturePath.c_str());
+    } else {
+        specularMapID = 0;
+        std::cout << "No specular map found in material\n";
     }
 
     // --- Ambient Color ---
@@ -219,20 +262,9 @@ void StaticMeshComp::loadMaterial(aiMaterial* material) {
         ambientColor = aiColor3D(0.1f, 0.1f, 0.1f);
     ambient = glm::vec3(ambientColor.r, ambientColor.g, ambientColor.b);
 
-    // --- Specular Color ---
-    aiColor3D specColor;
-    if (AI_SUCCESS != material->Get(AI_MATKEY_COLOR_SPECULAR, specColor)) {
-        specColor = aiColor3D(1.0f, 1.0f, 1.0f); // default
-        std::cout << "Failed to get Specular color, using default\n";
-    }
-    specularStrength = glm::max(glm::max(specColor.r, specColor.g), specColor.b); // use max channel as scalar
-
     // --- Shininess ---
     float shininessVal;
-    if (AI_SUCCESS != material->Get(AI_MATKEY_SHININESS, shininessVal)) {
+    if (AI_SUCCESS != material->Get(AI_MATKEY_SHININESS, shininessVal))
         shininessVal = 32.0f;
-        std::cout << "Failed to get shininess, using default 32\n";
-    }
     shininess = shininessVal;
 }
-

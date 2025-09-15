@@ -37,8 +37,9 @@ private:
 
     int indexCount;
     unsigned int textureID;
+    unsigned int normalMapID;
+    unsigned int specularMapID;
     float shininess;
-    float specularStrength;
     glm::vec3 ambient;
 
 };

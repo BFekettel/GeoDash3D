@@ -1,20 +1,20 @@
-# Cube material with BaseColor, Roughness, and Normal map
+# Cube material in Phong-style for OpenGL/Assimp
 
 newmtl Material
-Ka 0.100000 0.100000 0.100000
-Kd 1.000000 1.000000 1.000000
-Ks 0.100000 0.100000 0.100000
-Ke 0.000000 0.000000 0.000000
-Ns 20.000000
+Ka 0.100000 0.100000 0.100000    # Ambient
+Kd 1.000000 1.000000 1.000000    # Diffuse
+Ks 0.100000 0.100000 0.100000    # Specular
+Ke 0.000000 0.000000 0.000000    # Emissive
+Ns 20.000000                     # Shininess
 Ni 1.450000
 d 1.000000
 illum 2
 
-# Base color (albedo)
+# Base color (diffuse)
 map_Kd Wood07_1K_BaseColor.png
 
-# Roughness (re-using map_Ns, though in PBR engines you’d load it separately)
-map_Ns Wood07_1K_Roughness.png
+# Specular map (here we’re reusing roughness texture)
+map_Ks Wood07_1K_Roughness.png
 
-# Normal map (rough one you generated)
+# Normal map
 map_Bump Wood07_1K_Normal.png
