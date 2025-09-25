@@ -40,8 +40,8 @@ add_executable(Project
         libs/imgui/imgui_widgets.cpp
         libs/imgui/backends/imgui_impl_glfw.cpp
         libs/imgui/backends/imgui_impl_opengl3.cpp
-        src/Components/RadiusLightComp.cpp
-        src/Components/RadiusLightComp.h
+        src/Components/LightComp.cpp
+        src/Components/LightComp.h
         src/Entity/LightEntity.cpp
         src/Entity/LightEntity.h
 )

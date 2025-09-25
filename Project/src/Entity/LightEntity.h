@@ -1,31 +1,43 @@
-﻿//
-// Created by Ben on 14/09/2025.
-//
-
-#ifndef PROJECT_LIGHTENTITY_H
+﻿#ifndef PROJECT_LIGHTENTITY_H
 #define PROJECT_LIGHTENTITY_H
-#include "Entity.h"
-#include "../Components/RadiusLightComp.h"
 
-class LightEntity: public Entity {
-    public:
+#include "Entity.h"
+#include "../Components/LightComp.h"
+
+enum class LightType {
+    Global,   // directional
+    Point,
+    Spot
+};
+
+class LightEntity : public Entity {
+public:
     LightEntity();
     ~LightEntity() = default;
 
-    RadiusLightComp Light;
+    LightComp Light;
 
-    glm::vec3 getColor();
-    void setColor(glm::vec3 color);
+    // Type of light
+    LightType Type = LightType::Point;
 
-    float getIntensity();
-    void setIntensity(float intensity);
+    // --- Getters / Setters ---
+    glm::vec3 getColor() { return Light.color; }
+    void setColor(const glm::vec3& color) { Light.color = color; }
 
-    float getGradient();
-    void setGradient(float gradient);
+    float getIntensity() { return Light.intensity; }
+    void setIntensity(float intensity) { Light.intensity = intensity; }
 
-    float getRadius();
-    void setRadius(float radius);
+    glm::vec3 getDirection() { return Light.direction; }
+    void setDirection(const glm::vec3& dir) { Light.direction = dir; }
+
+    float getCutOff() { return Light.cutOff; }
+    void setCutOff(float cutoff) { Light.cutOff = cutoff; }
+
+    float getOuterCutOff() { return Light.outerCutOff; }
+    void setOuterCutOff(float outerCutoff) { Light.outerCutOff = outerCutoff; }
+
+    float getRadius() { return Light.radius; }
+    void setRadius(float radius) { Light.radius = radius; }
 };
-
 
 #endif //PROJECT_LIGHTENTITY_H

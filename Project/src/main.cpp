@@ -12,14 +12,14 @@
 #include "Rendering/RenderManager.h"
 #include "Developer/DevGui.h"
 #include "Developer/globals.h"
-#include "Components/RadiusLightComp.h"
+
 
 //Globals
 float GlobalLightIntensity = 1.0f;
 glm::vec3 GlobalLightColor = glm::vec3(1.0f, 1.0f, 1.0f);
 glm::vec3 GlobalLightPos = glm::vec3(0.0f, 1.5f, 1.0f);
-float GlobalLightRadius = 10.0f;
-float GlobalLightGradient = 1.0f;
+float GlobalLightRadius = 12.5f;
+float GlobalLightGradient = 17.5f;
 DevGui Globaldevgui;
 
 
@@ -75,9 +75,19 @@ int main() {
 //Testing Entities
     Entity test; // Test entity
     Entity test2; // Test entity
-    LightEntity light; // Test Light
+    LightEntity globalLight;
+    globalLight.Type = LightType::Global;
+    globalLight.setDirection(glm::vec3(-0.2f, -1.0f, -0.3f));
+    globalLight.StaticMesh.visible = false;
 
-    light.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
+    LightEntity pointLight;
+    pointLight.Type = LightType::Point;
+    pointLight.Position = glm::vec3(2.0f, 1.0f, 0.0f);
+    pointLight.StaticMesh.visible = true;
+
+
+
+
     test2.Position = glm::vec3(0.0f, -2.0f, 1.0f);
 
 
@@ -99,9 +109,12 @@ int main() {
 
     Renderer.SetActiveCamera(&Cam); // sets active camera
     Renderer.AddMesh(&test.StaticMesh); // adds test mesh to renderer
-    Renderer.AddMesh(&light.StaticMesh);
     Renderer.AddMesh(&test2.StaticMesh);
-    Renderer.Light = &light;
+    Renderer.AddMesh(&pointLight.StaticMesh);
+
+    Renderer.AddLight(&globalLight);
+    Renderer.AddLight(&pointLight);
+
 
 #pragma endregion
 
@@ -135,12 +148,11 @@ int main() {
         test2.tick(deltaTime);
         Globaldevgui.DrawGui(deltaTime);
 
-        light.tick(deltaTime);
-        light.Position = GlobalLightPos;
-        light.setIntensity(GlobalLightIntensity);
-        light.setColor(GlobalLightColor);
-        light.setRadius(GlobalLightRadius);
-        light.setGradient(GlobalLightGradient);
+        pointLight.tick(deltaTime);
+        pointLight.setIntensity(GlobalLightIntensity);
+        pointLight.setColor(GlobalLightColor);
+        pointLight.setRadius(GlobalLightRadius);
+        pointLight.Position = GlobalLightPos;
 
 
 #pragma region Camera Movement
@@ -207,8 +219,6 @@ int main() {
 #pragma endregion
 
     }
-
-
     //GUI cleanup
     Globaldevgui.Cleanup();
 

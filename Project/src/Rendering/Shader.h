@@ -27,8 +27,8 @@ public:
     void setFloat(const std::string& name, float val) const;
     void setInt(const std::string& name, int val) const;
 
-    static constexpr const char* vertexSrcPath = "../shaders/basic.vert";
-    static constexpr const char* fragmentSrcPath = "../shaders/basic.frag";
+    static constexpr const char* vertexSrcPath = "../shaders/default.vert";
+    static constexpr const char* fragmentSrcPath = "../shaders/default.frag";
 
 
 private:

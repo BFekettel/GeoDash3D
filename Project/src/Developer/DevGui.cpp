@@ -95,7 +95,7 @@ void DevGui::DrawGui(float &deltaTime) {
         ImGui::DragFloat("Global Light Location Z", &GlobalLightPos.z, 0.1f);
         ImGui::Separator();
         ImGui::DragFloat("Global Light Radius", &GlobalLightRadius, 0.1f);
-        ImGui::SliderFloat("Global Light Gradient", &GlobalLightGradient, 0.0f, 1.0f);
+        //ImGui::DragFloat("Global Light Gradient", &GlobalLightGradient, 0.1f);
     }
     ImGui::Text("Log: ");
     ImGui::Text(LogMessage);

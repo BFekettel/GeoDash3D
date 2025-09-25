@@ -17,8 +17,14 @@ public:
     // Rendering components
     std::vector<StaticMeshComp*> Meshes;
 
+    // Lights
+    std::vector<LightEntity*> Lights;
+
+    // --- Interface ---
     void SetActiveCamera(Camera* cam) { ActiveCamera = cam; }
     void AddMesh(StaticMeshComp* mesh) { Meshes.push_back(mesh); }
+    void AddLight(LightEntity* light) { Lights.push_back(light); }
+
     void RenderAll(Shader& shader);
 
     // Handle window resizing
@@ -30,13 +36,10 @@ public:
         }
     }
 
-    LightEntity* Light; //TEMP TODO: make this... better? need to be able to hold multiple lights lol
-
 private:
     float currentTime = glfwGetTime();
     float lastFrameTime = currentTime;
     float deltaTime = currentTime - lastFrameTime;
-
 };
 
 #endif

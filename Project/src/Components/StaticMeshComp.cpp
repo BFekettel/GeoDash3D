@@ -226,8 +226,8 @@ void StaticMeshComp::loadMaterial(aiMaterial* material) {
         std::string texturePath = "../content/Textures/" + filename;
         textureID = loadTexture(texturePath.c_str());
     } else {
-        textureID = 0;
-        std::cout << "No diffuse texture found in material\n";
+        textureID = loadTexture("../content/Textures/defaultTexture.jpg");
+        std::cout << "No diffuse texture found in material, using default\n";
     }
 
     // --- Normal Map (OBJ uses HEIGHT/BUMP, FBX uses NORMALS) ---
