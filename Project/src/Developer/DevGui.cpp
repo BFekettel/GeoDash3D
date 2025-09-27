@@ -75,8 +75,8 @@ void DevGui::DrawGui(float &deltaTime) {
         }
 
 
-        if (ImGui::Button("Recompile Shaders", ImVec2(-1, 0))) {
-            const char *message = "Recompiling Shaders...";
+        if (ImGui::Button("Recompile shaders", ImVec2(-1, 0))) {
+            const char *message = "Recompiling shaders...";
             LogMessage = message;
             recompileShaders = true;
         }
@@ -98,7 +98,7 @@ void DevGui::DrawGui(float &deltaTime) {
         ImGui::SliderFloat("Global Light Gradient", &GlobalLightGradient, 0.0f, 1.0f);
     }
     ImGui::Text("Log: ");
-    ImGui::Text(LogMessage);
+    ImGui::Text("%s", LogMessage);
 
 
     ImGui::End();

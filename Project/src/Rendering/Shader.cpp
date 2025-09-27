@@ -8,6 +8,8 @@
 
 Shader::Shader() : ID(0) {}
 
+
+
 unsigned int Shader::compileShader(unsigned int type, const char* source) {
     unsigned int shader = glCreateShader(type);
     glShaderSource(shader, 1, &source, nullptr);
