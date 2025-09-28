@@ -13,24 +13,19 @@
 #include "Developer/DevGui.h"
 #include "Developer/globals.h"
 
-
-//Globals
+// Globals
 float GlobalLightIntensity = 1.0f;
+float GlobalLightRadius = 10.0f;
 glm::vec3 GlobalLightColor = glm::vec3(1.0f, 1.0f, 1.0f);
 glm::vec3 GlobalLightPos = glm::vec3(0.0f, 1.5f, 1.0f);
-float GlobalLightRadius = 12.5f;
 float GlobalLightGradient = 17.5f;
 DevGui Globaldevgui;
 
-
 // Window settings
-const unsigned int WIDTH = 1200;
+const unsigned int WIDTH  = 1200;
 const unsigned int HEIGHT = 800;
 
-//TEMP LOADING SHADERS TODO: add to shader object
-
-
-
+// Callback for window resize
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     RenderManager* renderer = reinterpret_cast<RenderManager*>(glfwGetWindowUserPointer(window));
     if (renderer) {
@@ -38,10 +33,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     }
 }
 
-
 int main() {
 #pragma region GLFW Setup
-    // Init GLFW
     if (!glfwInit()) {
         std::cerr << "Failed to init GLFW" << std::endl;
         return -1;
@@ -57,110 +50,93 @@ int main() {
         return -1;
     }
     glfwMakeContextCurrent(window);
-    glfwSwapInterval(1); // Frame limter
-    /*
-     * 1 = monitor speed
-     * 0 = uncapped
-     * 2 = 50% cap
-     */
+    glfwSwapInterval(1);
 
-    // Init GLAD
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cerr << "Failed to init GLAD" << std::endl;
         return -1;
     }
-
 #pragma endregion
 
-//Testing Entities
-    Entity test; // Test entity
-    Entity test2; // Test entity
+#pragma region Test Entities + Lights
+    Entity test;
+    Entity test2;
+    test2.Position = glm::vec3(-2.0f, -1.0f, -2.0f);
+
     LightEntity globalLight;
-    globalLight.Type = LightType::Global;
-    globalLight.setDirection(glm::vec3(-0.2f, -1.0f, -0.3f));
-    globalLight.StaticMesh.visible = false;
+    globalLight.Type = LightType::Global;   // only global/spot cast shadows
+    globalLight.Position = GlobalLightPos;
+    globalLight.setColor(GlobalLightColor);
+    globalLight.setIntensity(GlobalLightIntensity);
+#pragma endregion
 
-    LightEntity pointLight;
-    pointLight.Type = LightType::Point;
-    pointLight.Position = glm::vec3(2.0f, 1.0f, 0.0f);
-    pointLight.StaticMesh.visible = true;
+#pragma region Shaders
+    Shader sceneShader;
+    sceneShader.compile("../shaders/default.vert", "../shaders/default.frag");
 
-
-
-
-    test2.Position = glm::vec3(0.0f, -2.0f, 1.0f);
-
-
-
-#pragma region Shader Tests
-
-    Shader basicShader;
-    basicShader.recompile();
-
+    Shader shadowShader;
+    shadowShader.compile("../shaders/shadow_depth.vs", "../shaders/shadow_depth.fs");
 #pragma endregion
 
 #pragma region Renderer Setup
     RenderManager Renderer;
     float aspect = static_cast<float>(WIDTH) / static_cast<float>(HEIGHT);
     Camera Cam(90.0f, aspect, 0.1f, 100.0f);
+    Renderer.SetActiveCamera(&Cam);
+    Renderer.AddMesh(&test.StaticMesh);
+    Renderer.AddMesh(&test2.StaticMesh);
+    Renderer.AddLight(&globalLight);
 
     glfwSetWindowUserPointer(window, &Renderer);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    Renderer.SetActiveCamera(&Cam); // sets active camera
-    Renderer.AddMesh(&test.StaticMesh); // adds test mesh to renderer
-    Renderer.AddMesh(&test2.StaticMesh);
-    Renderer.AddMesh(&pointLight.StaticMesh);
-
-    Renderer.AddLight(&globalLight);
-    Renderer.AddLight(&pointLight);
-
 
 #pragma endregion
 
-#pragma region Delta Setup
-    float currentTime = glfwGetTime();
+#pragma region Time Setup
+    float currentTime   = glfwGetTime();
     float lastFrameTime = currentTime;
-    float deltaTime = currentTime - lastFrameTime;
-
-
-
+    float deltaTime     = 0.0f;
 #pragma endregion
-    //IMGUI object
+
 
     Globaldevgui.Init(window);
 
-    //MAIN LOOP
+    // =============================
+    // Main Loop
+    // =============================
     while (!glfwWindowShouldClose(window)) {
         currentTime = glfwGetTime();
-        deltaTime = currentTime - lastFrameTime;
+        deltaTime   = currentTime - lastFrameTime;
         lastFrameTime = currentTime;
-        glEnable(GL_DEPTH_TEST); //depth testing
 
-        //Background
+        glEnable(GL_DEPTH_TEST);
+
+        // Background
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        //Tick Logic
+        // --- Scene + Shadows ---
+        Renderer.RenderAll(sceneShader, shadowShader);
 
-        Renderer.RenderAll(basicShader);
+        // --- Entity Logic ---
         test.tick(deltaTime);
         test2.tick(deltaTime);
+        if (auto Controller = test.GetComponent<ControllerComponent>()) {
+            Controller->tick(deltaTime);
+        }
+        globalLight.tick(deltaTime);
+        globalLight.setDirection(GlobalLightPos);
+        globalLight.setColor(GlobalLightColor);
+        globalLight.setIntensity(GlobalLightIntensity);
+
+        // --- Dev GUI ---
         Globaldevgui.DrawGui(deltaTime);
 
-        pointLight.tick(deltaTime);
-        pointLight.setIntensity(GlobalLightIntensity);
-        pointLight.setColor(GlobalLightColor);
-        pointLight.setRadius(GlobalLightRadius);
-        pointLight.Position = GlobalLightPos;
+#pragma region Camera Controls
+        float moveSpeed   = 5.0f;
+        float rotateSpeed = 90.0f;
 
-
-#pragma region Camera Movement
-        // Camera speed
-        float moveSpeed = 5.0f;       // units per second
-        float rotateSpeed = 90.0f;    // degrees per second
-
-        // Movement input (frame-rate independent)
         glm::vec3 forward = glm::normalize(Cam.Front);
         glm::vec3 right   = glm::normalize(glm::cross(forward, Cam.Up));
         glm::vec3 up      = Cam.Up;
@@ -172,56 +148,42 @@ int main() {
         if (glfwGetKey(window, GLFW_KEY_SPACE)) Cam.Position += up * moveSpeed * deltaTime;
         if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT)) Cam.Position -= up * moveSpeed * deltaTime;
 
-        // Rotation input (using arrow keys)
-        float yaw   = 0.0f;
-        float pitch = 0.0f;
-        if (glfwGetKey(window, GLFW_KEY_RIGHT))  yaw   = -rotateSpeed * deltaTime;
-        if (glfwGetKey(window, GLFW_KEY_LEFT)) yaw   =  rotateSpeed * deltaTime;
+        float yaw = 0.0f, pitch = 0.0f;
+        if (glfwGetKey(window, GLFW_KEY_RIGHT)) yaw   = -rotateSpeed * deltaTime;
+        if (glfwGetKey(window, GLFW_KEY_LEFT))  yaw   =  rotateSpeed * deltaTime;
         if (glfwGetKey(window, GLFW_KEY_UP))    pitch =  rotateSpeed * deltaTime;
         if (glfwGetKey(window, GLFW_KEY_DOWN))  pitch = -rotateSpeed * deltaTime;
 
-        // Apply rotation
         if (yaw != 0.0f || pitch != 0.0f) {
-            // Yaw: rotate around Up vector
             glm::mat4 yawRot   = glm::rotate(glm::mat4(1.0f), glm::radians(yaw), Cam.Up);
-            // Pitch: rotate around Right vector
             glm::mat4 pitchRot = glm::rotate(glm::mat4(1.0f), glm::radians(pitch), right);
-
             glm::vec4 newFront = pitchRot * yawRot * glm::vec4(forward, 0.0f);
             Cam.Front = glm::normalize(glm::vec3(newFront));
         }
-        if (auto Controller = test.GetComponent<ControllerComponent>()) {
-            Controller->tick(deltaTime);
-        }
 #pragma endregion
-        glfwSwapBuffers(window);
-        glfwPollEvents();
 
-
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //clear depth
-
-#pragma region Dev GUI
-        if (Globaldevgui.toggleCulling) { //toggle in ImGUI
-            glEnable(GL_CULL_FACE); // enable culling
-            glCullFace(GL_BACK); // cull back faces
-            glFrontFace(GL_CCW); // counter-clockwise winding = front face
-        } else {
-            glDisable(GL_CULL_FACE); //disable culling
-        }
-
-
-
+        // --- Shader hot-reload ---
         if (Globaldevgui.recompileShaders) {
-            basicShader.recompile();
+            sceneShader.compile("../shaders/default.vert", "../shaders/default.frag");
+            shadowShader.compile("../shaders/shadow_depth.vs", "../shaders/shadow_depth.fs");
             Globaldevgui.recompileShaders = false;
             Globaldevgui.LogMessage = "Shaders Compiled";
         }
-#pragma endregion
 
+        // --- Face culling toggle ---
+        if (Globaldevgui.toggleCulling) {
+            glEnable(GL_CULL_FACE);
+            glCullFace(GL_BACK);
+            glFrontFace(GL_CCW);
+        } else {
+            glDisable(GL_CULL_FACE);
+        }
+
+        glfwSwapBuffers(window);
+        glfwPollEvents();
     }
-    //GUI cleanup
-    Globaldevgui.Cleanup();
 
+    Globaldevgui.Cleanup();
     glfwTerminate();
     return 0;
 }

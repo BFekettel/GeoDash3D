@@ -204,7 +204,8 @@ void StaticMeshComp::Draw(const Shader& shader) {
         shader.setInt("material.specularMap", 2);
     }
 
-    // Shininess
+    // Material properties
+    shader.setVec3("material.ambient", ambient);
     shader.setFloat("material.shininess", shininess);
 
     // Draw
@@ -215,6 +216,7 @@ void StaticMeshComp::Draw(const Shader& shader) {
     // Unbind textures
     glBindTexture(GL_TEXTURE_2D, 0);
 }
+
 
 void StaticMeshComp::loadMaterial(aiMaterial* material) {
     // --- Diffuse Texture ---

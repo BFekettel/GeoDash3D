@@ -1,45 +1,42 @@
-﻿#ifndef RENDER_MANAGER_H
-#define RENDER_MANAGER_H
-
+﻿#pragma once
 #include <vector>
+#include <glm/glm.hpp>
 #include "Camera.h"
-#include "../Components/StaticMeshComp.h"
 #include "Shader.h"
 #include "../Entity/LightEntity.h"
+#include "../Components/StaticMeshComp.h"
+
+struct ShadowData {
+    unsigned int FBO = 0;
+    unsigned int depthMap = 0;
+};
 
 class RenderManager {
 public:
-    RenderManager() = default;
+    RenderManager();
 
-    // Camera
-    Camera* ActiveCamera = nullptr;
-
-    // Rendering components
-    std::vector<StaticMeshComp*> Meshes;
-
-    // Lights
-    std::vector<LightEntity*> Lights;
-
-    // --- Interface ---
-    void SetActiveCamera(Camera* cam) { ActiveCamera = cam; }
     void AddMesh(StaticMeshComp* mesh) { Meshes.push_back(mesh); }
     void AddLight(LightEntity* light) { Lights.push_back(light); }
+    void SetActiveCamera(Camera* cam) { ActiveCamera = cam; }
 
-    void RenderAll(Shader& shader);
+    void RenderAll(Shader& sceneShader, Shader& shadowShader);
+    void OnResize(int w, int h);
 
-    // Handle window resizing
-    void OnResize(int width, int height) {
-        glViewport(0, 0, width, height);
-        if (ActiveCamera && height > 0) {
-            float aspect = static_cast<float>(width) / static_cast<float>(height);
-            ActiveCamera->SetAspect(aspect);
-        }
-    }
+    Camera* ActiveCamera = nullptr;
 
 private:
-    float currentTime = glfwGetTime();
-    float lastFrameTime = currentTime;
-    float deltaTime = currentTime - lastFrameTime;
-};
+    void EnsureShadowResources();
+    void RenderShadowPass(size_t i, Shader& shadowShader);
 
-#endif
+
+    std::vector<StaticMeshComp*> Meshes;
+    std::vector<LightEntity*> Lights;
+    std::vector<ShadowData> shadowMaps;
+    std::vector<glm::mat4> lightSpaceMats;
+
+    int windowWidth = 1200, windowHeight = 800;
+    float currentTime = 0, lastFrameTime = 0, deltaTime = 0;
+
+    const unsigned int SHADOW_WIDTH = 1024;
+    const unsigned int SHADOW_HEIGHT = 1024;
+};
