@@ -17,7 +17,7 @@
 float GlobalLightIntensity = 1.0f;
 float GlobalLightRadius = 10.0f;
 glm::vec3 GlobalLightColor = glm::vec3(1.0f, 1.0f, 1.0f);
-glm::vec3 GlobalLightPos = glm::vec3(0.0f, 1.5f, 1.0f);
+glm::vec3 GlobalLightPos = glm::vec3(0.0f, -45.0f, 1.0f);
 float GlobalLightGradient = 17.5f;
 DevGui Globaldevgui;
 
@@ -32,6 +32,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
         renderer->OnResize(width, height);
     }
 }
+
 
 int main() {
 #pragma region GLFW Setup
@@ -61,7 +62,8 @@ int main() {
 #pragma region Test Entities + Lights
     Entity test;
     Entity test2;
-    test2.Position = glm::vec3(-2.0f, -1.0f, -2.0f);
+    test2.StaticMesh.loadModel("../content/models/planeLarge.obj");
+    test2.Position = glm::vec3(0.0f, -1.0f, 0.0f);
 
     LightEntity globalLight;
     globalLight.Type = LightType::Global;   // only global/spot cast shadows
@@ -126,7 +128,7 @@ int main() {
             Controller->tick(deltaTime);
         }
         globalLight.tick(deltaTime);
-        globalLight.setDirection(GlobalLightPos);
+        globalLight.setDirection(GlobalLightPos.x, GlobalLightPos.y);
         globalLight.setColor(GlobalLightColor);
         globalLight.setIntensity(GlobalLightIntensity);
 

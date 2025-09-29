@@ -217,6 +217,44 @@ void StaticMeshComp::Draw(const Shader& shader) {
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+unsigned int StaticMeshComp::createDefaultNormalMap() {
+    unsigned int texID;
+    glGenTextures(1, &texID);
+    glBindTexture(GL_TEXTURE_2D, texID);
+
+    // Flat normal = (0.5, 0.5, 1.0)
+    unsigned char flatNormal[3] = { 128, 128, 255 };
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1, 1, 0,
+                 GL_RGB, GL_UNSIGNED_BYTE, flatNormal);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    return texID;
+}
+
+unsigned int StaticMeshComp::createDefaultSpecularMap() {
+    unsigned int texID;
+    glGenTextures(1, &texID);
+    glBindTexture(GL_TEXTURE_2D, texID);
+
+    // White = full specular
+    unsigned char whitePixel[3] = { 255, 255, 255 };
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1, 1, 0,
+                 GL_RGB, GL_UNSIGNED_BYTE, whitePixel);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    return texID;
+}
+
 
 void StaticMeshComp::loadMaterial(aiMaterial* material) {
     // --- Diffuse Texture ---
@@ -240,10 +278,10 @@ void StaticMeshComp::loadMaterial(aiMaterial* material) {
         std::string filename = str.C_Str();
         std::string texturePath = "../content/Textures/" + filename;
         normalMapID = loadTexture(texturePath.c_str());
-    } else {
-        normalMapID = 0;
-        std::cout << "No normal map found in material\n";
-    }
+        } else {
+            normalMapID = createDefaultNormalMap(); // <-- guaranteed safe fallback
+            std::cout << "No normal map found in material, using default flat normal\n";
+        }
 
     // --- Specular Map ---
     if (material->GetTextureCount(aiTextureType_SPECULAR) > 0) {
@@ -254,8 +292,8 @@ void StaticMeshComp::loadMaterial(aiMaterial* material) {
         std::string texturePath = "../content/Textures/" + filename;
         specularMapID = loadTexture(texturePath.c_str());
     } else {
-        specularMapID = 0;
-        std::cout << "No specular map found in material\n";
+        specularMapID = createDefaultSpecularMap(); // safe fallback
+        std::cout << "No specular map found in material, using default white\n";
     }
 
     // --- Ambient Color ---

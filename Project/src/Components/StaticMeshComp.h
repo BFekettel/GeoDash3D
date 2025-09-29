@@ -30,6 +30,10 @@ public:
     void tick(float deltaTime) override {}
     void Draw(const Shader& shader);
 
+    unsigned int createDefaultNormalMap();
+
+    unsigned int createDefaultSpecularMap();
+
     bool visible = true;
 
 private:

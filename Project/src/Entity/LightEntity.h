@@ -28,7 +28,7 @@ public:
     void setIntensity(float intensity) { Light.intensity = intensity; }
 
     glm::vec3 getDirection() { return Light.direction; }
-    void setDirection(const glm::vec3& dir) { Light.direction = dir; }
+    void setDirection(float yawDeg, float pitchDeg);
 
     float getCutOff() { return Light.cutOff; }
     void setCutOff(float cutoff) { Light.cutOff = cutoff; }

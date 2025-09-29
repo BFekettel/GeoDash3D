@@ -27,7 +27,7 @@ public:
 private:
     void EnsureShadowResources();
     void RenderShadowPass(size_t i, Shader& shadowShader);
-
+    glm::mat4 CalculateLightSpaceMatrix(LightEntity* L, Camera* cam);
 
     std::vector<StaticMeshComp*> Meshes;
     std::vector<LightEntity*> Lights;
@@ -35,8 +35,10 @@ private:
     std::vector<glm::mat4> lightSpaceMats;
 
     int windowWidth = 1200, windowHeight = 800;
-    float currentTime = 0, lastFrameTime = 0, deltaTime = 0;
+    float currentTime = glfwGetTime();
+    float lastFrameTime = currentTime;
+    float deltaTime = currentTime - lastFrameTime;
 
-    const unsigned int SHADOW_WIDTH = 1024;
-    const unsigned int SHADOW_HEIGHT = 1024;
+    const unsigned int SHADOW_WIDTH = 4096;
+    const unsigned int SHADOW_HEIGHT = 4096;
 };

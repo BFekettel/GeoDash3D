@@ -1,6 +1,7 @@
 ﻿#include "RenderManager.h"
 #include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
+#include "Developer/globals.h"
 
 RenderManager::RenderManager() {}
 
@@ -105,6 +106,12 @@ void RenderManager::RenderAll(Shader& sceneShader, Shader& shadowShader) {
     }
 
     for (auto* mesh : Meshes) mesh->Draw(sceneShader);
+
+    // Update frame timing
+    currentTime = glfwGetTime();
+    deltaTime = static_cast<float>(currentTime - lastFrameTime);
+    lastFrameTime = currentTime;
+    Globaldevgui.drawTime = deltaTime;
 }
 
 void RenderManager::OnResize(int w, int h) {
