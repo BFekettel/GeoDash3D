@@ -62,8 +62,12 @@ int main() {
 #pragma region Test Entities + Lights
     Entity test;
     Entity test2;
-    test2.StaticMesh.loadModel("../content/models/planeLarge.obj");
-    test2.Position = glm::vec3(0.0f, -1.0f, 0.0f);
+    Entity test3;
+    Entity test4;
+
+    test2.Position = glm::vec3(0.0f, -2.0f, 1.0f);
+    test3.Position = glm::vec3(2.0f, -2.0f, 1.0f);
+    test4.Position = glm::vec3(4.0f, -2.0f, 1.0f);
 
     LightEntity globalLight;
     globalLight.Type = LightType::Global;   // only global/spot cast shadows
@@ -87,6 +91,8 @@ int main() {
     Renderer.SetActiveCamera(&Cam);
     Renderer.AddMesh(&test.StaticMesh);
     Renderer.AddMesh(&test2.StaticMesh);
+    Renderer.AddMesh(&test3.StaticMesh);
+    Renderer.AddMesh(&test4.StaticMesh);
     Renderer.AddLight(&globalLight);
 
     glfwSetWindowUserPointer(window, &Renderer);
@@ -124,6 +130,8 @@ int main() {
         // --- Entity Logic ---
         test.tick(deltaTime);
         test2.tick(deltaTime);
+        test3.tick(deltaTime);
+        test4.tick(deltaTime);
         if (auto Controller = test.GetComponent<ControllerComponent>()) {
             Controller->tick(deltaTime);
         }
