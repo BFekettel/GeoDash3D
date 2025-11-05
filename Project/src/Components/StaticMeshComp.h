@@ -28,7 +28,7 @@ public:
     void loadModel(const char* path);
 
     void tick(float deltaTime) override {}
-    void Draw(const Shader& shader);
+    void Draw(const Shader& shader, float Distance);
 
     unsigned int createDefaultNormalMap();
 
@@ -45,6 +45,7 @@ private:
     unsigned int specularMapID;
     float shininess;
     glm::vec3 ambient;
+    float drawDistance = 10.f;
 
 };
 

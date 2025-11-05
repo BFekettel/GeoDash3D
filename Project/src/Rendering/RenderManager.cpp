@@ -61,7 +61,7 @@ void RenderManager::RenderShadowPass(size_t i, Shader& shadowShader) {
     glBindFramebuffer(GL_FRAMEBUFFER, sd.FBO);
     glClear(GL_DEPTH_BUFFER_BIT);
 
-    for (auto* mesh : Meshes) mesh->Draw(shadowShader);
+    for (auto* mesh : Meshes) mesh->Draw(shadowShader, 0.f);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -105,7 +105,7 @@ void RenderManager::RenderAll(Shader& sceneShader, Shader& shadowShader) {
         sceneShader.setInt("shadowMap", 3);
     }
 
-    for (auto* mesh : Meshes) mesh->Draw(sceneShader);
+    for (auto* mesh : Meshes) mesh->Draw(sceneShader, glm::distance(ActiveCamera->Position, mesh->Owner->Position));
 
     // Update frame timing
     currentTime = glfwGetTime();

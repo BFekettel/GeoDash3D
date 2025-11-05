@@ -175,8 +175,12 @@ void StaticMeshComp::loadModel(const char *path) {
     indexCount = static_cast<unsigned int>(indices.size());
 }
 
-void StaticMeshComp::Draw(const Shader& shader) {
-    if (!visible) return;
+void StaticMeshComp::Draw(const Shader& shader, float Distance) {
+    std::cout << Distance << std::endl;
+    if (Distance != 0.f) {
+        if (!visible || (Distance >= drawDistance)) return;
+        //checks if visible and if distance between cam and object is less then draw Distance and distance is not 0.f
+    }
 
     shader.use();
 
