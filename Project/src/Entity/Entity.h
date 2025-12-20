@@ -8,6 +8,7 @@
 #include <iostream>
 #include <typeindex>
 #include <unordered_map>
+#include <memory>
 
 #include "../Components/StaticMeshComp.h"
 #include "../Components/Component.h"

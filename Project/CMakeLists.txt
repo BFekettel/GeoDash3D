@@ -4,6 +4,21 @@ project(Project)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+## Gets the assimp dll for the project.
+
+include(FetchContent)
+set(FETCHCONTENT_BASE_DIR ${PROJECT_SOURCE_DIR}/libs CACHE PATH "Missing description." FORCE)
+FetchContent_Declare(assimp
+GIT_REPOSITORY https://github.com/assimp/assimp.git
+GIT_TAG master)
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_INSTALL OFF CACHE BOOL "" FORCE)
+
+FetchContent_MakeAvailable(assimp)
+
+
+
 # Include directories
 include_directories(${CMAKE_SOURCE_DIR}/include)       # GLFW headers
 include_directories(external)                           # GLM & GLAD headers
@@ -15,6 +30,7 @@ include_directories(
         ${CMAKE_SOURCE_DIR}/libs/imgui/backends
 )
 
+
 # Library directories
 link_directories(${CMAKE_SOURCE_DIR}/lib)              # glfw3.lib location
 
@@ -22,7 +38,7 @@ link_directories(${CMAKE_SOURCE_DIR}/lib)              # glfw3.lib location
 find_package(OpenGL REQUIRED)
 
 # Add executable and source files
-add_executable(Project
+add_executable(${PROJECT_NAME}
         src/main.cpp
         external/glad/src/glad.c
         src/Entity/Entity.cpp
@@ -47,13 +63,15 @@ add_executable(Project
 )
 
 
+target_include_directories(${PROJECT_NAME} PRIVATE libs/assimp-src/include)
 
 # Link libraries
-target_link_libraries(Project
+target_link_libraries(${PROJECT_NAME}
         glfw3
-        assimp-vc143-mt
+        assimp
         ${OPENGL_gl_LIBRARY}
         gdi32
         user32
         shell32
+
 )
