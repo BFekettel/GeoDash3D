@@ -67,7 +67,7 @@ int main() {
 
     test2.Position = glm::vec3(0.0f, -2.0f, 1.0f);
     test3.Position = glm::vec3(2.0f, -2.0f, 1.0f);
-    test4.Position = glm::vec3(4.0f, -2.0f, 1.0f);
+    test4.Position = glm::vec3(0.0f, -2.0f, 3.0f);
 
     LightEntity globalLight;
     globalLight.Type = LightType::Global;   // only global/spot cast shadows
