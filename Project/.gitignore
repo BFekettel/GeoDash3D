@@ -18,6 +18,10 @@ cmake-build-*/
 *.o
 *.a
 *.so
+*.dll
+*.exe
+
+*.log
 
 # CLion
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
