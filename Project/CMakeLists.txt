@@ -20,22 +20,22 @@ FetchContent_MakeAvailable(assimp)
 
 
 # Include directories
-include_directories(${CMAKE_SOURCE_DIR}/include)       # GLFW headers
 include_directories(external)                           # GLM & GLAD headers
+include_directories(external/glad/include)                           # GLM & GLAD headers
 include_directories(${CMAKE_SOURCE_DIR}/src)          # all headers in src
 include_directories(external)                          # GLM & GLAD
+
+include_directories(external/stb)                          # stb
 
 include_directories(
         ${CMAKE_SOURCE_DIR}/libs/imgui
         ${CMAKE_SOURCE_DIR}/libs/imgui/backends
 )
 
-
-# Library directories
-link_directories(${CMAKE_SOURCE_DIR}/lib)              # glfw3.lib location
-
 # OpenGL
 find_package(OpenGL REQUIRED)
+
+add_library(glad external/glad/src/glad.c)
 
 # Add executable and source files
 add_executable(${PROJECT_NAME}
@@ -62,16 +62,14 @@ add_executable(${PROJECT_NAME}
         src/Entity/LightEntity.h
 )
 
-
 target_include_directories(${PROJECT_NAME} PRIVATE libs/assimp-src/include)
+
+find_package(glfw3 REQUIRED)
+find_package(assimp REQUIRED)
 
 # Link libraries
 target_link_libraries(${PROJECT_NAME}
-        glfw3
+        glfw
         assimp
-        ${OPENGL_gl_LIBRARY}
-        gdi32
-        user32
-        shell32
-
+        OpenGL::GL
 )

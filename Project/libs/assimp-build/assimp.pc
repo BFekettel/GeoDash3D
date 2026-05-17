@@ -1,9 +1,9 @@
-libdir=C:/Program Files (x86)/Project/lib
-includedir=C:/Program Files (x86)/Project/include
+libdir=/usr/local/lib
+includedir=/usr/local/include
 
 Name: Project
 Description: Import various well-known 3D model formats in an uniform manner.
-Version: 6.0.2
+Version: 6.0.5
 Libs: -L${libdir} -lassimp
-Libs.private:  
+Libs.private: -lstdc++ -loptimized;/usr/lib/x86_64-linux-gnu/libz.a;debug;/usr/lib/x86_64-linux-gnu/libz.a
 Cflags: -I${includedir}

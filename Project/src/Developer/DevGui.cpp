@@ -98,7 +98,7 @@ void DevGui::DrawGui(float &deltaTime) {
         //ImGui::DragFloat("Global Light Gradient", &GlobalLightGradient, 0.1f);
     }
     ImGui::Text("Log: ");
-    ImGui::Text(LogMessage);
+    ImGui::Text("%s", LogMessage);
 
 
     ImGui::End();

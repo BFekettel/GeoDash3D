@@ -12,6 +12,12 @@ _deps
 CMakeUserPresets.json
 # lib
 # libs
+build/
+cmake-build-*/
+.idea/
+*.o
+*.a
+*.so
 
 # CLion
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can

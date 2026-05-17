@@ -2,6 +2,6 @@
 # The patch step will be re-executed if anything in this file changes.
 # No other meaning or use of this file is supported.
 
-command (connected)=D:/ProgramFolders/CLion 2025.2/bin/cmake/win/x64/bin/cmake.exe;-Dcan_fetch=YES;-DCMAKE_MESSAGE_LOG_LEVEL=VERBOSE;-P;D:/Essentials/GeoDash3D/Project/libs/assimp-subbuild/assimp-populate-prefix/tmp/assimp-populate-gitupdate.cmake
-command (disconnected)=D:/ProgramFolders/CLion 2025.2/bin/cmake/win/x64/bin/cmake.exe;-Dcan_fetch=NO;-DCMAKE_MESSAGE_LOG_LEVEL=VERBOSE;-P;D:/Essentials/GeoDash3D/Project/libs/assimp-subbuild/assimp-populate-prefix/tmp/assimp-populate-gitupdate.cmake
-work_dir=D:/Essentials/GeoDash3D/Project/libs/assimp-src
+command (connected)=/snap/clion/439/bin/cmake/linux/x64/bin/cmake;-Dcan_fetch=YES;-DCMAKE_MESSAGE_LOG_LEVEL=VERBOSE;-P;/home/chee7/Documents/GeoDash3D/Project/libs/assimp-subbuild/assimp-populate-prefix/tmp/assimp-populate-gitupdate.cmake
+command (disconnected)=/snap/clion/439/bin/cmake/linux/x64/bin/cmake;-Dcan_fetch=NO;-DCMAKE_MESSAGE_LOG_LEVEL=VERBOSE;-P;/home/chee7/Documents/GeoDash3D/Project/libs/assimp-subbuild/assimp-populate-prefix/tmp/assimp-populate-gitupdate.cmake
+work_dir=/home/chee7/Documents/GeoDash3D/Project/libs/assimp-src
