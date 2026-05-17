@@ -12,8 +12,16 @@ _deps
 CMakeUserPresets.json
 # lib
 # libs
+assimp*
+Project/include/*
+Project/include/assimp
 build/
+libs/*
+libs/assimp-src/
+Project/libs/
+Project/build/
 cmake-build-*/
+cmake-build-debug/
 .idea/
 *.o
 *.a
