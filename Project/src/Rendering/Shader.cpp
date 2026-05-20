@@ -33,6 +33,11 @@ void Shader::compile(const std::string& vertexPath, const std::string& fragmentP
     std::string vertexCode   = loadShaderSource(vertexPath);
     std::string fragmentCode = loadShaderSource(fragmentPath);
 
+    std::cout << "VERTEX SHADER SOURCE:\n";
+    std::cout << vertexCode.substr(0, 100) << std::endl;
+    std::cout << "FRAGMENT SHADER SOURCE:\n";
+    std::cout << fragmentCode.substr(0, 100) << std::endl;
+
     unsigned int vertex   = compileShader(GL_VERTEX_SHADER, vertexCode.c_str());
     unsigned int fragment = compileShader(GL_FRAGMENT_SHADER, fragmentCode.c_str());
 

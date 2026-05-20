@@ -57,7 +57,16 @@ int main() {
         std::cerr << "Failed to init GLAD" << std::endl;
         return -1;
     }
+
+    std::cout << "OpenGL Version: "
+          << glGetString(GL_VERSION)
+          << std::endl;
+
+    std::cout << "GLSL Version: "
+              << glGetString(GL_SHADING_LANGUAGE_VERSION)
+              << std::endl;
 #pragma endregion
+
 
 #pragma region Test Entities + Lights
     Entity test;
