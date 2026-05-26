@@ -1,0 +1,41 @@
+name: Linux Build
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            cmake \
+            g++ \
+            libglfw3-dev \
+            libx11-dev \
+            libxrandr-dev \
+            libxi-dev \
+            libgl1-mesa-dev \
+            libglu1-mesa-dev \
+            libxxf86vm-dev \
+            libxinerama-dev \
+            libxcursor-dev
+
+      - name: Configure CMake
+        run: |
+          cd Project 
+          cmake -B build
+
+      - name: Build Project
+        run: |
+          cd Project
+          cmake --build build -j$(nproc)
